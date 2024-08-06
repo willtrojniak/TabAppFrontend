@@ -8,4 +8,7 @@ export default defineConfig({
     TanStackRouterVite(),
     viteReact()
   ],
+  server: {
+    host: '127.0.0.1'
+  }
 })
