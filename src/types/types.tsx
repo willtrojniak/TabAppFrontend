@@ -8,7 +8,7 @@ export type User = {
 
 export type Auth = {
   login: () => void
-  logout: () => void
+  logout: () => Promise<void>
   isAuthenticated: boolean
   user?: User
 }
