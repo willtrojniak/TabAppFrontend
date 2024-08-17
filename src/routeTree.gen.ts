@@ -14,7 +14,20 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthProfileImport } from './routes/_auth.profile'
+import { Route as AuthShopsImport } from './routes/_auth/shops'
+import { Route as AuthProfileImport } from './routes/_auth/profile'
+import { Route as AuthShopsIndexImport } from './routes/_auth/shops/index'
+import { Route as AuthShopsShopIdImport } from './routes/_auth/shops/$shopId'
+import { Route as AuthShopsShopIdIndexImport } from './routes/_auth/shops/$shopId/index'
+import { Route as AuthShopsShopIdItemsImport } from './routes/_auth/shops/$shopId/items'
+import { Route as AuthShopsShopIdCheckoutImport } from './routes/_auth/shops/$shopId/checkout'
+import { Route as AuthShopsShopIdItemsIndexImport } from './routes/_auth/shops/$shopId/items/index'
+import { Route as AuthShopsShopIdTabsTabIdImport } from './routes/_auth/shops/$shopId/tabs/$tabId'
+import { Route as AuthShopsShopIdItemsItemIdImport } from './routes/_auth/shops/$shopId/items/$itemId'
+import { Route as AuthShopsShopIdCheckoutItemIdImport } from './routes/_auth/shops/$shopId/checkout/$itemId'
+import { Route as AuthShopsShopIdTabsTabIdIndexImport } from './routes/_auth/shops/$shopId/tabs/$tabId.index'
+import { Route as AuthShopsShopIdItemsItemIdIndexImport } from './routes/_auth/shops/$shopId/items/$itemId.index'
+import { Route as AuthShopsShopIdCheckoutItemIdIndexImport } from './routes/_auth/shops/$shopId/checkout/$itemId.index'
 
 // Create/Update Routes
 
@@ -33,10 +46,81 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthShopsRoute = AuthShopsImport.update({
+  path: '/shops',
+  getParentRoute: () => AuthRoute,
+} as any)
+
 const AuthProfileRoute = AuthProfileImport.update({
   path: '/profile',
   getParentRoute: () => AuthRoute,
 } as any)
+
+const AuthShopsIndexRoute = AuthShopsIndexImport.update({
+  path: '/',
+  getParentRoute: () => AuthShopsRoute,
+} as any)
+
+const AuthShopsShopIdRoute = AuthShopsShopIdImport.update({
+  path: '/$shopId',
+  getParentRoute: () => AuthShopsRoute,
+} as any)
+
+const AuthShopsShopIdIndexRoute = AuthShopsShopIdIndexImport.update({
+  path: '/',
+  getParentRoute: () => AuthShopsShopIdRoute,
+} as any)
+
+const AuthShopsShopIdItemsRoute = AuthShopsShopIdItemsImport.update({
+  path: '/items',
+  getParentRoute: () => AuthShopsShopIdRoute,
+} as any)
+
+const AuthShopsShopIdCheckoutRoute = AuthShopsShopIdCheckoutImport.update({
+  path: '/checkout',
+  getParentRoute: () => AuthShopsShopIdRoute,
+} as any)
+
+const AuthShopsShopIdItemsIndexRoute = AuthShopsShopIdItemsIndexImport.update({
+  path: '/',
+  getParentRoute: () => AuthShopsShopIdItemsRoute,
+} as any)
+
+const AuthShopsShopIdTabsTabIdRoute = AuthShopsShopIdTabsTabIdImport.update({
+  path: '/tabs/$tabId',
+  getParentRoute: () => AuthShopsShopIdRoute,
+} as any)
+
+const AuthShopsShopIdItemsItemIdRoute = AuthShopsShopIdItemsItemIdImport.update(
+  {
+    path: '/$itemId',
+    getParentRoute: () => AuthShopsShopIdItemsRoute,
+  } as any,
+)
+
+const AuthShopsShopIdCheckoutItemIdRoute =
+  AuthShopsShopIdCheckoutItemIdImport.update({
+    path: '/$itemId',
+    getParentRoute: () => AuthShopsShopIdCheckoutRoute,
+  } as any)
+
+const AuthShopsShopIdTabsTabIdIndexRoute =
+  AuthShopsShopIdTabsTabIdIndexImport.update({
+    path: '/',
+    getParentRoute: () => AuthShopsShopIdTabsTabIdRoute,
+  } as any)
+
+const AuthShopsShopIdItemsItemIdIndexRoute =
+  AuthShopsShopIdItemsItemIdIndexImport.update({
+    path: '/',
+    getParentRoute: () => AuthShopsShopIdItemsItemIdRoute,
+  } as any)
+
+const AuthShopsShopIdCheckoutItemIdIndexRoute =
+  AuthShopsShopIdCheckoutItemIdIndexImport.update({
+    path: '/',
+    getParentRoute: () => AuthShopsShopIdCheckoutItemIdRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -70,6 +154,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProfileImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/shops': {
+      id: '/_auth/shops'
+      path: '/shops'
+      fullPath: '/shops'
+      preLoaderRoute: typeof AuthShopsImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/shops/$shopId': {
+      id: '/_auth/shops/$shopId'
+      path: '/$shopId'
+      fullPath: '/shops/$shopId'
+      preLoaderRoute: typeof AuthShopsShopIdImport
+      parentRoute: typeof AuthShopsImport
+    }
+    '/_auth/shops/': {
+      id: '/_auth/shops/'
+      path: '/'
+      fullPath: '/shops/'
+      preLoaderRoute: typeof AuthShopsIndexImport
+      parentRoute: typeof AuthShopsImport
+    }
+    '/_auth/shops/$shopId/checkout': {
+      id: '/_auth/shops/$shopId/checkout'
+      path: '/checkout'
+      fullPath: '/shops/$shopId/checkout'
+      preLoaderRoute: typeof AuthShopsShopIdCheckoutImport
+      parentRoute: typeof AuthShopsShopIdImport
+    }
+    '/_auth/shops/$shopId/items': {
+      id: '/_auth/shops/$shopId/items'
+      path: '/items'
+      fullPath: '/shops/$shopId/items'
+      preLoaderRoute: typeof AuthShopsShopIdItemsImport
+      parentRoute: typeof AuthShopsShopIdImport
+    }
+    '/_auth/shops/$shopId/': {
+      id: '/_auth/shops/$shopId/'
+      path: '/'
+      fullPath: '/shops/$shopId/'
+      preLoaderRoute: typeof AuthShopsShopIdIndexImport
+      parentRoute: typeof AuthShopsShopIdImport
+    }
+    '/_auth/shops/$shopId/checkout/$itemId': {
+      id: '/_auth/shops/$shopId/checkout/$itemId'
+      path: '/$itemId'
+      fullPath: '/shops/$shopId/checkout/$itemId'
+      preLoaderRoute: typeof AuthShopsShopIdCheckoutItemIdImport
+      parentRoute: typeof AuthShopsShopIdCheckoutImport
+    }
+    '/_auth/shops/$shopId/items/$itemId': {
+      id: '/_auth/shops/$shopId/items/$itemId'
+      path: '/$itemId'
+      fullPath: '/shops/$shopId/items/$itemId'
+      preLoaderRoute: typeof AuthShopsShopIdItemsItemIdImport
+      parentRoute: typeof AuthShopsShopIdItemsImport
+    }
+    '/_auth/shops/$shopId/tabs/$tabId': {
+      id: '/_auth/shops/$shopId/tabs/$tabId'
+      path: '/tabs/$tabId'
+      fullPath: '/shops/$shopId/tabs/$tabId'
+      preLoaderRoute: typeof AuthShopsShopIdTabsTabIdImport
+      parentRoute: typeof AuthShopsShopIdImport
+    }
+    '/_auth/shops/$shopId/items/': {
+      id: '/_auth/shops/$shopId/items/'
+      path: '/'
+      fullPath: '/shops/$shopId/items/'
+      preLoaderRoute: typeof AuthShopsShopIdItemsIndexImport
+      parentRoute: typeof AuthShopsShopIdItemsImport
+    }
+    '/_auth/shops/$shopId/checkout/$itemId/': {
+      id: '/_auth/shops/$shopId/checkout/$itemId/'
+      path: '/'
+      fullPath: '/shops/$shopId/checkout/$itemId/'
+      preLoaderRoute: typeof AuthShopsShopIdCheckoutItemIdIndexImport
+      parentRoute: typeof AuthShopsShopIdCheckoutItemIdImport
+    }
+    '/_auth/shops/$shopId/items/$itemId/': {
+      id: '/_auth/shops/$shopId/items/$itemId/'
+      path: '/'
+      fullPath: '/shops/$shopId/items/$itemId/'
+      preLoaderRoute: typeof AuthShopsShopIdItemsItemIdIndexImport
+      parentRoute: typeof AuthShopsShopIdItemsItemIdImport
+    }
+    '/_auth/shops/$shopId/tabs/$tabId/': {
+      id: '/_auth/shops/$shopId/tabs/$tabId/'
+      path: '/'
+      fullPath: '/shops/$shopId/tabs/$tabId/'
+      preLoaderRoute: typeof AuthShopsShopIdTabsTabIdIndexImport
+      parentRoute: typeof AuthShopsShopIdTabsTabIdImport
+    }
   }
 }
 
@@ -77,7 +252,32 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
-  AuthRoute: AuthRoute.addChildren({ AuthProfileRoute }),
+  AuthRoute: AuthRoute.addChildren({
+    AuthProfileRoute,
+    AuthShopsRoute: AuthShopsRoute.addChildren({
+      AuthShopsShopIdRoute: AuthShopsShopIdRoute.addChildren({
+        AuthShopsShopIdCheckoutRoute: AuthShopsShopIdCheckoutRoute.addChildren({
+          AuthShopsShopIdCheckoutItemIdRoute:
+            AuthShopsShopIdCheckoutItemIdRoute.addChildren({
+              AuthShopsShopIdCheckoutItemIdIndexRoute,
+            }),
+        }),
+        AuthShopsShopIdItemsRoute: AuthShopsShopIdItemsRoute.addChildren({
+          AuthShopsShopIdItemsItemIdRoute:
+            AuthShopsShopIdItemsItemIdRoute.addChildren({
+              AuthShopsShopIdItemsItemIdIndexRoute,
+            }),
+          AuthShopsShopIdItemsIndexRoute,
+        }),
+        AuthShopsShopIdIndexRoute,
+        AuthShopsShopIdTabsTabIdRoute:
+          AuthShopsShopIdTabsTabIdRoute.addChildren({
+            AuthShopsShopIdTabsTabIdIndexRoute,
+          }),
+      }),
+      AuthShopsIndexRoute,
+    }),
+  }),
   LoginRoute,
 })
 
@@ -100,15 +300,94 @@ export const routeTree = rootRoute.addChildren({
     "/_auth": {
       "filePath": "_auth.tsx",
       "children": [
-        "/_auth/profile"
+        "/_auth/profile",
+        "/_auth/shops"
       ]
     },
     "/login": {
       "filePath": "login.tsx"
     },
     "/_auth/profile": {
-      "filePath": "_auth.profile.tsx",
+      "filePath": "_auth/profile.tsx",
       "parent": "/_auth"
+    },
+    "/_auth/shops": {
+      "filePath": "_auth/shops.tsx",
+      "parent": "/_auth",
+      "children": [
+        "/_auth/shops/$shopId",
+        "/_auth/shops/"
+      ]
+    },
+    "/_auth/shops/$shopId": {
+      "filePath": "_auth/shops/$shopId.tsx",
+      "parent": "/_auth/shops",
+      "children": [
+        "/_auth/shops/$shopId/checkout",
+        "/_auth/shops/$shopId/items",
+        "/_auth/shops/$shopId/",
+        "/_auth/shops/$shopId/tabs/$tabId"
+      ]
+    },
+    "/_auth/shops/": {
+      "filePath": "_auth/shops/index.tsx",
+      "parent": "/_auth/shops"
+    },
+    "/_auth/shops/$shopId/checkout": {
+      "filePath": "_auth/shops/$shopId/checkout.tsx",
+      "parent": "/_auth/shops/$shopId",
+      "children": [
+        "/_auth/shops/$shopId/checkout/$itemId"
+      ]
+    },
+    "/_auth/shops/$shopId/items": {
+      "filePath": "_auth/shops/$shopId/items.tsx",
+      "parent": "/_auth/shops/$shopId",
+      "children": [
+        "/_auth/shops/$shopId/items/$itemId",
+        "/_auth/shops/$shopId/items/"
+      ]
+    },
+    "/_auth/shops/$shopId/": {
+      "filePath": "_auth/shops/$shopId/index.tsx",
+      "parent": "/_auth/shops/$shopId"
+    },
+    "/_auth/shops/$shopId/checkout/$itemId": {
+      "filePath": "_auth/shops/$shopId/checkout/$itemId.tsx",
+      "parent": "/_auth/shops/$shopId/checkout",
+      "children": [
+        "/_auth/shops/$shopId/checkout/$itemId/"
+      ]
+    },
+    "/_auth/shops/$shopId/items/$itemId": {
+      "filePath": "_auth/shops/$shopId/items/$itemId.tsx",
+      "parent": "/_auth/shops/$shopId/items",
+      "children": [
+        "/_auth/shops/$shopId/items/$itemId/"
+      ]
+    },
+    "/_auth/shops/$shopId/tabs/$tabId": {
+      "filePath": "_auth/shops/$shopId/tabs/$tabId.tsx",
+      "parent": "/_auth/shops/$shopId",
+      "children": [
+        "/_auth/shops/$shopId/tabs/$tabId/"
+      ]
+    },
+    "/_auth/shops/$shopId/items/": {
+      "filePath": "_auth/shops/$shopId/items/index.tsx",
+      "parent": "/_auth/shops/$shopId/items"
+    },
+    "/_auth/shops/$shopId/checkout/$itemId/": {
+      "filePath": "_auth/shops/$shopId/checkout/$itemId.index.tsx",
+      "parent": "/_auth/shops/$shopId/checkout/$itemId"
+    },
+    "/_auth/shops/$shopId/items/$itemId/": {
+      "filePath": "_auth/shops/$shopId/items/$itemId.index.tsx",
+      "parent": "/_auth/shops/$shopId/items/$itemId"
+    },
+    "/_auth/shops/$shopId/tabs/$tabId/": {
+      "filePath": "_auth/shops/$shopId/tabs/$tabId.index.tsx",
+      "parent": "/_auth/shops/$shopId/tabs/$tabId"
     }
   }
 }

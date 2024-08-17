@@ -1,30 +1,10 @@
 import React, { useCallback } from "react";
-import { Auth, User } from "../types/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { Auth } from "../types/types";
+import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { invalidateGetUser, useGetUser } from "../api/users";
 
 const AuthContext = React.createContext<Auth | null>(null);
-
-async function getUser() {
-  const url = 'http://127.0.0.1:3000/api/v1/users'
-
-  try {
-    const response = await axios.get<User>(url, { withCredentials: true })
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError && error.response) {
-      if (error.response.status === 401) {
-        return null;
-      }
-    }
-    console.error("Error fetching user data", error)
-    return null;
-  }
-}
-
-function useGetUser() {
-  return useQuery({ queryKey: ['getUser'], queryFn: () => getUser() })
-}
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: user, isLoading } = useGetUser();
@@ -33,15 +13,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = useCallback(async () => {
     await axios.post('http://127.0.0.1:3000/logout')
-    queryClient.invalidateQueries({ queryKey: ['getUser'] })
-  }, [])
+    invalidateGetUser(queryClient)
+  }, [queryClient])
 
-  return <AuthContext.Provider value={{ isAuthenticated, user: user ?? undefined, login: () => { }, logout }}>
+  return <AuthContext.Provider value={{ isAuthenticated, user: user ?? undefined, logout }}>
     {!isLoading && children}
   </AuthContext.Provider>
 }
 
 export function useAuth() {
   const context = React.useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
   return context;
 }
