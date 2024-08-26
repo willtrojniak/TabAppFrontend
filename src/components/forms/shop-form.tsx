@@ -92,6 +92,9 @@ function ShopFormBody({ control, paymentMethods }: {
   shop?: Shop,
   paymentMethods: PaymentMethod[],
 }) {
+
+  const options = React.useMemo(() => paymentMethods.map(m => ({ value: m, label: m })), [paymentMethods])
+
   return <>
     <FormField
       control={control}
@@ -101,7 +104,7 @@ function ShopFormBody({ control, paymentMethods }: {
         <FormItem>
           <FormLabel>Name</FormLabel>
           <FormControl>
-            <Input {...field} placeholder="i.e. Latte" />
+            <Input {...field} placeholder="Matcha Shop" />
           </FormControl>
           <FormDescription>Shop name.</FormDescription>
           <FormMessage />
@@ -117,9 +120,7 @@ function ShopFormBody({ control, paymentMethods }: {
             <ReactSelect
               {...field}
               isMulti
-              options={paymentMethods}
-              getOptionValue={(o) => { const m = o as PaymentMethod; return m }}
-              getOptionLabel={(o) => { const m = o as PaymentMethod; return m }}
+              options={options}
             />
           </FormControl>
           <FormDescription>The payment methods accepted by this shop.</FormDescription>
