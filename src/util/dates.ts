@@ -39,3 +39,16 @@ export function GetActiveDayAcronyms(dayBits: number) {
   }
   return daysAcronyms
 }
+
+export function getActiveDayBits(acronyms: string[]) {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const dayBits = days.reduce<number>((prev, curr, index) => {
+    if (acronyms.includes(curr)) {
+      return prev + (1 << (index))
+    }
+    return prev
+  }, 0)
+
+  return dayBits
+
+}

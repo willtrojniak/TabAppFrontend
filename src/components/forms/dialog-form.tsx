@@ -22,8 +22,8 @@ export function DialogForm<T extends FieldValues>({ children, title, desc, trigg
   const [intOpen, setIntOpen] = React.useState(false);
 
   React.useEffect(() => {
-    if (open) reset();
-  }, [open])
+    if (open || intOpen) reset();
+  }, [open, intOpen])
 
   const submitHandler = handleSubmit(async (data) => {
     try {

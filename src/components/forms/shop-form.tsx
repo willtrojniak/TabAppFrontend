@@ -14,7 +14,7 @@ import { ReactSelect } from "../ui/react-select";
 function getShopDefaults(shop?: Shop) {
   return {
     name: shop?.name ?? "",
-    payment_methods: shop?.payment_methods ?? []
+    payment_methods: shop?.payment_methods.map(v => ({ value: v, label: v })) ?? []
   } satisfies ShopCreateInput
 }
 
@@ -48,7 +48,8 @@ export function useShopForm({ shop }: { shop?: Shop }) {
     form.reset(getShopDefaults(shop), { keepValues: false })
   }, [shop])
 
-  const onSubmit = React.useCallback(async (values: ShopCreate) => {
+  const onSubmit = React.useCallback(async (v: unknown) => {
+    const values = v as ShopCreate
     if (!shop?.id) {
       await createShop.mutateAsync({ data: values }, {
         onSuccess: () => {
@@ -88,7 +89,7 @@ export function ShopFormCard({ shop, paymentMethods }: { shop?: Shop, paymentMet
 }
 
 function ShopFormBody({ control, paymentMethods }: {
-  control: Control<ShopCreate>,
+  control: Control<ShopCreateInput>,
   shop?: Shop,
   paymentMethods: PaymentMethod[],
 }) {

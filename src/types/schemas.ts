@@ -15,7 +15,12 @@ const price = z.string().transform((val, ctx) => {
   return parsed
 }).pipe(z.number().min(0)).or(z.number().min(0))
 
-const HHMMTime = z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+const option = z.object({
+  label: z.string(),
+  value: z.string(),
+}).transform(o => o.value)
+
+const HHMMTime = z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format. Expected HH:MM.")
 
 // Types
 export const itemOverviewSchema = z.object({
@@ -46,7 +51,7 @@ export type UserUpdate = z.infer<typeof userUpdateSchema>
 
 export const shopCreateSchema = z.object({
   name: z.string().min(1).max(64),
-  payment_methods: z.array(z.nativeEnum(PaymentMethod))
+  payment_methods: z.array(option.pipe(z.nativeEnum(PaymentMethod)))
 })
 
 export type ShopCreateInput = z.input<typeof shopCreateSchema>
@@ -137,26 +142,29 @@ const chartstring = z.string().regex(/^([A-z0-9]{5})[ |-]?([A-z0-9]{5})(?:(?:-|\
 
 
 export const tabCreateSchema = z.object({
-  display_name: z.string({ description: "Tab Name" }).min(2),
-  payment_method: z.nativeEnum(PaymentMethod),
-  organization: z.string().min(2),
+  display_name: z.string({ description: "Tab Name" }).min(2, "Tab name must be at least two characters").max(64),
+  organization: z.string().min(2, "Organization must be at least two characters").max(64),
+  payment_method: z.nativeEnum(PaymentMethod, { message: "Invalid value" }),
+  payment_details: z.union([z.string().length(0, { message: "Invalid charstring. Must be of format XXXXX-XXXXX(-XXXXX)" }), chartstring.optional()]),
+  billing_interval_days: z.number().min(1, { message: "Billing interval must be at least one day." }).max(365),
   dates: z.object({
-    from: z.string().date(),
-    to: z.string().date()
-  }),
+    from: z.string({ message: "Required" }).date("Invalid Date"),
+    to: z.string({ message: "Required" }).date("Invalid Date")
+  }, { message: "Required" }),
   daily_start_time: HHMMTime,
   daily_end_time: HHMMTime,
-  billing_interval_days: z.number().min(1).max(365),
-  payment_details: z.union([z.string().length(0), chartstring.optional()]),
-  verification_list: z.string().transform(s => s.split(',').filter(entry => entry !== "")).pipe(z.array(z.string().email())),
-  verification_method: z.nativeEnum(VerificationMethod),
-  dollar_limit_per_order: price
+  active_days_of_wk: z.number().min(1, { message: "At least one day must be active." }).max(127),
+  dollar_limit_per_order: price,
+  verification_method: z.nativeEnum(VerificationMethod, { message: "Invalid value" }),
+  verification_list: z.string().transform(s => s.split('\n').filter(entry => entry !== "")).pipe(z.array(z.string().trim().email({ message: "Invalid email" }))),
 }).refine(input => {
-  if (input.payment_method === PaymentMethod.chartstring && !input.payment_method) return false
-  if (getMinutes24hTime(input.daily_start_time) >= getMinutes24hTime(input.daily_end_time)) return false
+  if (input.payment_method === PaymentMethod.chartstring && input.payment_details === "") return false
 
   return true
-}).transform(({ dates, ...rest }) => ({ ...rest, start_date: dates.from, end_date: dates.to }))
+}, { message: "Chartstring is required.", path: ["payment_details"] }).refine(input => {
+  if (getMinutes24hTime(input.daily_start_time) >= getMinutes24hTime(input.daily_end_time)) return false
+  return true
+}, { message: "End time must be after start time.", path: ["daily_end_time"] }).transform(({ dates, ...rest }) => ({ ...rest, start_date: dates.from, end_date: dates.to }))
 
 export type TabCreateInput = z.input<typeof tabCreateSchema>
 export type TabCreate = z.output<typeof tabCreateSchema>

@@ -28,7 +28,6 @@ export function DateRangeInput({ value, onChange }: {
 
   const formattedFrom = from ? format(from, "LLL dd, y") : ""
   const formattedTo = to ? format(to, "LLL dd, y") : ""
-  console.log(value)
 
   return <Popover>
     <PopoverTrigger asChild>

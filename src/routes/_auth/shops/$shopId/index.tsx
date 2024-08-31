@@ -19,7 +19,7 @@ import { getShopItemsQueryOptions } from '@/api/items'
 import { getShopTabsQueryOptions } from '@/api/tabs'
 import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { TabFormDialog } from '@/components/forms/tab-form'
+import { TabFormSheet } from '@/components/forms/tab-form'
 
 export const Route = createFileRoute('/_auth/shops/$shopId/')({
   component: ShopComponent
@@ -98,9 +98,9 @@ function ShopComponent() {
         <DataTable columns={tabCols} data={tabs} />
       </CardContent>
       <CardFooter>
-        <TabFormDialog shopId={shopId}>
+        <TabFormSheet shop={shop}>
           <CreateButton>Create Tab</CreateButton>
-        </TabFormDialog>
+        </TabFormSheet>
       </CardFooter>
     </Card>
   </div >
