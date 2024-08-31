@@ -144,27 +144,48 @@ const chartstring = z.string().regex(/^([A-z0-9]{5})[ |-]?([A-z0-9]{5})(?:(?:-|\
 export const tabCreateSchema = z.object({
   display_name: z.string({ description: "Tab Name" }).min(2, "Tab name must be at least two characters").max(64),
   organization: z.string().min(2, "Organization must be at least two characters").max(64),
-  payment_method: z.nativeEnum(PaymentMethod, { message: "Invalid value" }),
-  payment_details: z.union([z.string().length(0, { message: "Invalid charstring. Must be of format XXXXX-XXXXX(-XXXXX)" }), chartstring.optional()]),
+  payment: z.object({
+    payment_method: z.nativeEnum(PaymentMethod, { message: "Invalid value" }),
+    payment_details: z.union([z.string().length(0, { message: "Invalid charstring. Must be of format XXXXX-XXXXX(-XXXXX)" }), chartstring.optional()]),
+  }).superRefine((val, ctx) => {
+    // Check that chartstring is provided for chartstring payment method
+    if (val.payment_method === PaymentMethod.chartstring && val.payment_details === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Chartstring is required for selected payment method.",
+        path: ["payment_details"]
+      })
+    }
+  }),
   billing_interval_days: z.number().min(1, { message: "Billing interval must be at least one day." }).max(365),
   dates: z.object({
     from: z.string({ message: "Required" }).date("Invalid Date"),
     to: z.string({ message: "Required" }).date("Invalid Date")
   }, { message: "Required" }),
-  daily_start_time: HHMMTime,
-  daily_end_time: HHMMTime,
+  times: z.object({
+    daily_start_time: HHMMTime,
+    daily_end_time: HHMMTime
+  }).superRefine((val, ctx) => {
+    // Check that start times are before end times
+    if (getMinutes24hTime(val.daily_start_time) >= getMinutes24hTime(val.daily_end_time)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End time must be after start time.",
+        path: ["daily_end_time"]
+      })
+    }
+  }),
   active_days_of_wk: z.number().min(1, { message: "At least one day must be active." }).max(127),
   dollar_limit_per_order: price,
   verification_method: z.nativeEnum(VerificationMethod, { message: "Invalid value" }),
   verification_list: z.string().transform(s => s.split('\n').filter(entry => entry !== "")).pipe(z.array(z.string().trim().email({ message: "Invalid email" }))),
-}).refine(input => {
-  if (input.payment_method === PaymentMethod.chartstring && input.payment_details === "") return false
+}).transform((val) => {
+  const { dates, times: { daily_start_time, daily_end_time }, payment: { payment_method, payment_details }, ...rest } = val;
+  return { ...rest, start_date: dates.from, end_date: dates.to, daily_start_time, daily_end_time, payment_method, payment_details }
 
-  return true
-}, { message: "Chartstring is required.", path: ["payment_details"] }).refine(input => {
-  if (getMinutes24hTime(input.daily_start_time) >= getMinutes24hTime(input.daily_end_time)) return false
-  return true
-}, { message: "End time must be after start time.", path: ["daily_end_time"] }).transform(({ dates, ...rest }) => ({ ...rest, start_date: dates.from, end_date: dates.to }))
+})
+
+
 
 export type TabCreateInput = z.input<typeof tabCreateSchema>
 export type TabCreate = z.output<typeof tabCreateSchema>

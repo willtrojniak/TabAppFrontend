@@ -17,14 +17,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 function getTabDefaults(tab?: Tab) {
   return {
     display_name: tab?.display_name ?? "",
-    payment_method: tab?.payment_method ?? "" as PaymentMethod,
+    payment: {
+      payment_method: tab?.payment_method ?? "" as PaymentMethod,
+      payment_details: tab?.payment_details ?? "",
+    },
     organization: tab?.organization ?? "",
-    dates: { from: tab?.start_date ?? "", to: tab?.end_date ?? "" },
-    daily_start_time: tab?.daily_start_time ?? "",
-    daily_end_time: tab?.daily_end_time ?? "",
+    dates: {
+      from: tab?.start_date ?? "",
+      to: tab?.end_date ?? ""
+    },
+    times: {
+      daily_start_time: tab?.daily_start_time ?? "",
+      daily_end_time: tab?.daily_end_time ?? "",
+    },
     active_days_of_wk: tab?.active_days_of_wk ?? 0,
     billing_interval_days: tab?.billing_interval_days ?? 0,
-    payment_details: tab?.payment_details ?? "",
     verification_list: tab?.verification_list.join(",") ?? "",
     verification_method: tab?.verification_method ?? "" as VerificationMethod,
     dollar_limit_per_order: tab?.dollar_limit_per_order ?? 0
@@ -52,8 +59,16 @@ export function useTabForm({ shopId, tab }: {
     form.reset(getTabDefaults(tab))
   }, [tab])
 
-  const { formState: { errors } } = form;
-  console.log(errors)
+  const start_time = form.watch("times.daily_start_time");
+  React.useEffect(() => {
+    if (form.formState.isSubmitted) form.trigger("times.daily_end_time")
+  }, [start_time])
+
+  const payment_method = form.watch("payment.payment_method");
+  React.useEffect(() => {
+    if (form.formState.isSubmitted) form.trigger("payment.payment_details")
+  }, [payment_method])
+
 
   const onSubmit = React.useCallback(async (v: unknown) => {
     const data = v as TabCreate
@@ -125,7 +140,7 @@ function TabFormBody({ control, shop }: {
       )} />
     <FormField
       control={control}
-      name="payment_method"
+      name="payment.payment_method"
       rules={{}}
       render={({ field }) => (
         <FormItem className="grid grid-cols-3 items-center">
@@ -147,7 +162,7 @@ function TabFormBody({ control, shop }: {
       } />
     < FormField
       control={control}
-      name="payment_details"
+      name="payment.payment_details"
       rules={{}}
       render={({ field }) => (
         <FormItem className="grid grid-cols-3 items-center">
@@ -200,7 +215,7 @@ function TabFormBody({ control, shop }: {
       )} />
     < FormField
       control={control}
-      name="daily_start_time"
+      name="times.daily_start_time"
       rules={{}}
       render={({ field }) => (
         <FormItem className="grid grid-cols-3 items-center">
@@ -214,7 +229,7 @@ function TabFormBody({ control, shop }: {
       )} />
     < FormField
       control={control}
-      name="daily_end_time"
+      name="times.daily_end_time"
       rules={{}}
       render={({ field }) => (
         <FormItem className="grid grid-cols-3 items-center">

@@ -44,6 +44,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
     "date-fns": "^3.6.0",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.424.0",
     "react": "^18.3.1",
     "react-day-picker": "8.10.1",
@@ -59,6 +60,7 @@
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.46.7",
+    "@types/lodash": "^4.17.7",
     "@types/node": "^22.1.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
