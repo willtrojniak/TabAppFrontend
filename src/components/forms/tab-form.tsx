@@ -13,6 +13,7 @@ import { PriceInput } from "../ui/price-input";
 import { Textarea } from "../ui/textarea";
 import { SheetForm } from "./sheet-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { CardForm } from "./card-form";
 
 function getTabDefaults(tab?: Tab) {
   return {
@@ -32,7 +33,7 @@ function getTabDefaults(tab?: Tab) {
     },
     active_days_of_wk: tab?.active_days_of_wk ?? 0,
     billing_interval_days: tab?.billing_interval_days ?? 0,
-    verification_list: tab?.verification_list.join(",") ?? "",
+    verification_list: tab?.verification_list?.join("\n") ?? "",
     verification_method: tab?.verification_method ?? "" as VerificationMethod,
     dollar_limit_per_order: tab?.dollar_limit_per_order ?? 0
   } satisfies TabCreateInput
@@ -90,6 +91,18 @@ export function useTabForm({ shopId, tab }: {
   return { form, onSubmit, title, desc }
 }
 
+export function TabFormCard({ shop, tab }: {
+  shop: Shop,
+  tab?: Tab,
+}) {
+  const { form, onSubmit, title, desc } = useTabForm({ shopId: shop.id, tab })
+
+  return <CardForm form={form} title={title} desc={desc} onSubmit={onSubmit} >
+    <TabFormBody control={form.control} shop={shop} />
+  </CardForm>
+
+}
+
 export function TabFormSheet({ children, shop, tab }: {
   children: React.ReactNode,
   shop: Shop,
@@ -97,7 +110,7 @@ export function TabFormSheet({ children, shop, tab }: {
 }) {
   const { form, onSubmit, title, desc } = useTabForm({ shopId: shop.id, tab })
 
-  return <SheetForm form={form} title={title} desc={desc} trigger={children} onSubmit={onSubmit} shouldClose={!tab}>
+  return <SheetForm form={form} title={title} desc={desc} trigger={children} onSubmit={onSubmit} >
     <TabFormBody control={form.control} shop={shop} />
   </SheetForm>
 }
@@ -194,9 +207,11 @@ function TabFormBody({ control, shop }: {
               <SelectItem value="14">Biweekly (14 Days)</SelectItem>
               <SelectItem value="30">Monthly (30 Days)</SelectItem>
               <SelectItem value="91">Quarterly (91 Days)</SelectItem>
+              <SelectItem value="182">Biannually (182 Days)</SelectItem>
+              <SelectItem value="365">Annually (365 Days)</SelectItem>
             </SelectContent>
           </Select>
-          <FormDescription className="col-span-2 col-start-2">You will receive an itemized invoice at the end of every billing interval.</FormDescription>
+          <FormDescription className="col-span-2 col-start-2">You will receive an itemized invoice at the end of every billing interval. Invoices can be requested before the end of the billing interval.</FormDescription>
           <FormMessage className="col-span-2 col-start-2" />
         </FormItem>
       )} />

@@ -1,16 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getShopTabForIdQueryOptions, useCloseBill } from '@/api/tabs'
+import { getShopTabForIdQueryOptions, useApproveTab, useCloseBill } from '@/api/tabs'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, CornerDownRight } from 'lucide-react';
-import { getFormattedDayFromUTC } from '@/util/dates';
+import { Format24hTime, FormdateDateMMDDYYYY, GetActiveDayAcronyms, getFormattedDayFromUTC } from '@/util/dates';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrencyUSD } from '@/util/currency';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { toast } from '@/components/ui/use-toast';
+import { TabFormSheet } from '@/components/forms/tab-form';
+import { getShopForIdQueryOptions } from '@/api/shops';
+import { EditButton } from '@/components/ui/edit-button';
+import { CheckButton } from '@/components/ui/check-button';
+import { TabStatus } from '@/types/types';
+import { useOnErrorToast, useOnSuccessToast } from '@/api/toasts';
 
 export const Route = createFileRoute('/_auth/shops/$shopId/tabs/$tabId/')({
   component: TabComponent
@@ -18,25 +23,81 @@ export const Route = createFileRoute('/_auth/shops/$shopId/tabs/$tabId/')({
 
 function TabComponent() {
   const { shopId, tabId } = Route.useParams();
+  const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
   const { data: tab } = useSuspenseQuery(getShopTabForIdQueryOptions(shopId, tabId))
+  const onSuccess = useOnSuccessToast()
+  const onError = useOnErrorToast()
 
-  const closeTab = useCloseBill()
+  const closeBill = useCloseBill()
   const handleClose = (shopId: number, tabId: number, billId: number) => {
-    closeTab.mutate({ shopId, tabId, billId }, {
-      onError: () => toast({
-        title: "Uh oh! Something went wrong.",
-        variant: "destructive"
-      })
+    closeBill.mutate({ shopId, tabId, billId }, {
+      onError,
     })
-
   }
 
-  return <div className='flex flex-col items-start'>
+  const approveTab = useApproveTab()
+  const handleApprove = (shopId: number, tabId: number) => {
+    approveTab.mutate({ shopId, tabId }, {
+      onSuccess: () => onSuccess("Successfully approved tab."),
+      onError,
+    })
+  }
+
+  return <div className='flex flex-col gap-4 items-start'>
     <Card>
+      <CardHeader><CardTitle>{tab.display_name}</CardTitle></CardHeader>
+      <CardContent className='grid grid-cols-3 gap-4'>
+        <span>Status:</span>
+        <span><Badge variant={tab.status === TabStatus.pending ? "default" : "outline"}> {tab.status}</Badge></span>
+        <span className='font-bold'>Pending Updates</span>
+        <span>Organization:</span>
+        <span>{tab.organization}</span>
+        <span>{tab.pending_updates?.organization}</span>
+        <span>Payment Method:</span>
+        <span>{tab.payment_method}</span>
+        <span>{tab.pending_updates?.payment_method}</span>
+        <span>Payment Details:</span>
+        <span>{tab.payment_details}</span>
+        <span>{tab.pending_updates?.payment_details}</span>
+        <span>Billing Interval:</span>
+        <span>{tab.billing_interval_days} days</span>
+        <span>{tab.pending_updates?.billing_interval_days}</span>
+        <span>Active Date(s):</span>
+        <span>{tab.start_date !== tab.end_date ? `${FormdateDateMMDDYYYY(tab.start_date)} - ${FormdateDateMMDDYYYY(tab.end_date)}` : FormdateDateMMDDYYYY(tab.start_date)}</span>
+        <span>{tab.pending_updates?.start_date !== tab.pending_updates?.end_date && tab.pending_updates ? `${FormdateDateMMDDYYYY(tab.pending_updates?.start_date)} - ${FormdateDateMMDDYYYY(tab.pending_updates.end_date)}` : tab.pending_updates ? FormdateDateMMDDYYYY(tab.pending_updates.start_date) : ""}</span>
+        <span>Time:</span>
+        <span>{Format24hTime(tab.daily_start_time)} - {Format24hTime(tab.daily_end_time)}</span>
+        <span>{tab.pending_updates ? `${Format24hTime(tab.pending_updates.daily_start_time)} - ${Format24hTime(tab.pending_updates.daily_end_time)}` : ""}</span>
+        <span>Active Days:</span>
+        <span>{GetActiveDayAcronyms(tab.active_days_of_wk).join(", ")}</span>
+        <span>{tab.pending_updates ? GetActiveDayAcronyms(tab.active_days_of_wk).join(", ") : ""}</span>
+        <span>Dollar Limit per Order:</span>
+        <span>{formatCurrencyUSD(tab.dollar_limit_per_order)}</span>
+        <span>{tab.pending_updates ? formatCurrencyUSD(tab.dollar_limit_per_order) : ""}</span>
+        <span>Verification Method:</span>
+        <span>{tab.verification_method}</span>
+        <span>{tab.pending_updates?.verification_method}</span>
+      </CardContent>
+      <CardFooter>
+        <TabFormSheet shop={shop} tab={tab}>
+          <EditButton>Edit Tab</EditButton>
+        </TabFormSheet>
+        <CheckButton
+          disabled={
+            approveTab.isPending
+            || (tab.status === TabStatus.confirmed && tab.pending_updates === null)
+            || tab.status === TabStatus.closed
+          }
+          onClick={() => handleApprove(shopId, tabId)}
+        >
+          Approve Tab
+        </CheckButton>
+      </CardFooter>
     </Card>
     <Card className='flex flex-col items-start max-w-full overflow-hidden'>
       <CardHeader><CardTitle>Tab Bills</CardTitle></CardHeader>
       <CardContent className='max-w-full flex flex-col items-start gap-6'>
+        {tab.bills.length === 0 && <div>No data to display</div>}
         {tab.bills.map((bill, index, arr) => {
           let total = 0
           return <Collapsible key={bill.id} className='max-w-full'>
