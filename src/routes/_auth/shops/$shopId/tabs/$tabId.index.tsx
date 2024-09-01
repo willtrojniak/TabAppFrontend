@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, CornerDownRight } from 'lucide-react';
-import { Format24hTime, FormdateDateMMDDYYYY, GetActiveDayAcronyms, getFormattedDayFromUTC } from '@/util/dates';
+import { Format24hTime, FormatDateMMDDYYYY, GetActiveDayAcronyms, getFormattedDayFromUTC } from '@/util/dates';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrencyUSD } from '@/util/currency';
 import React from 'react';
@@ -63,8 +63,8 @@ function TabComponent() {
         <span>{tab.billing_interval_days} days</span>
         <span>{tab.pending_updates?.billing_interval_days}</span>
         <span>Active Date(s):</span>
-        <span>{tab.start_date !== tab.end_date ? `${FormdateDateMMDDYYYY(tab.start_date)} - ${FormdateDateMMDDYYYY(tab.end_date)}` : FormdateDateMMDDYYYY(tab.start_date)}</span>
-        <span>{tab.pending_updates?.start_date !== tab.pending_updates?.end_date && tab.pending_updates ? `${FormdateDateMMDDYYYY(tab.pending_updates?.start_date)} - ${FormdateDateMMDDYYYY(tab.pending_updates.end_date)}` : tab.pending_updates ? FormdateDateMMDDYYYY(tab.pending_updates.start_date) : ""}</span>
+        <span>{tab.start_date !== tab.end_date ? `${FormatDateMMDDYYYY(tab.start_date)} - ${FormatDateMMDDYYYY(tab.end_date)}` : FormatDateMMDDYYYY(tab.start_date)}</span>
+        <span>{tab.pending_updates?.start_date !== tab.pending_updates?.end_date && tab.pending_updates ? `${FormatDateMMDDYYYY(tab.pending_updates?.start_date)} - ${FormatDateMMDDYYYY(tab.pending_updates.end_date)}` : tab.pending_updates ? FormatDateMMDDYYYY(tab.pending_updates.start_date) : ""}</span>
         <span>Time:</span>
         <span>{Format24hTime(tab.daily_start_time)} - {Format24hTime(tab.daily_end_time)}</span>
         <span>{tab.pending_updates ? `${Format24hTime(tab.pending_updates.daily_start_time)} - ${Format24hTime(tab.pending_updates.daily_end_time)}` : ""}</span>

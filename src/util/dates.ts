@@ -1,4 +1,4 @@
-export function FormdateDateMMDDYYYY(date: string) {
+export function FormatDateMMDDYYYY(date: string) {
   return date.replace(/^(\d{4})-(\d{2})-(\d{2})$/, "$2/$3/$1")
 }
 
