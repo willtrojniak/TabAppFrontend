@@ -21,7 +21,13 @@ axios.interceptors.response.use((response) => {
   return Promise.reject(error);
 })
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 30 // 30 second stale time
+    }
+  }
+})
 
 const router = createRouter({
   routeTree,

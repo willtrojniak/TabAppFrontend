@@ -147,7 +147,7 @@ export const tabCreateSchema = z.object({
   payment: z.object({
     payment_method: z.nativeEnum(PaymentMethod, { message: "Invalid value" }),
     payment_details: z.union([z.string().length(0, { message: "Invalid charstring. Must be of format XXXXX-XXXXX(-XXXXX)" }), chartstring.optional()]),
-  }).superRefine((val, ctx) => {
+  }).transform((val, ctx) => {
     // Check that chartstring is provided for chartstring payment method
     if (val.payment_method === PaymentMethod.chartstring && val.payment_details === "") {
       ctx.addIssue({
@@ -155,6 +155,10 @@ export const tabCreateSchema = z.object({
         message: "Chartstring is required for selected payment method.",
         path: ["payment_details"]
       })
+    }
+    return {
+      payment_method: val.payment_method,
+      payment_details: val.payment_method === PaymentMethod.in_person ? "" : val.payment_details
     }
   }),
   billing_interval_days: z.number().min(1, { message: "Billing interval must be at least one day." }).max(365),

@@ -4,7 +4,7 @@ import { TabCreate, TabCreateInput, tabCreateSchema } from "@/types/schemas";
 import { PaymentMethod, Shop, Tab, VerificationMethod } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import { Control, useForm } from "react-hook-form";
+import { Control, useForm, useWatch } from "react-hook-form";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { DateRangeInput } from "../ui/date-range-input";
@@ -121,6 +121,7 @@ function TabFormBody({ control, shop }: {
 }) {
 
   const verificationOptions = [VerificationMethod.specify, VerificationMethod.email, VerificationMethod.voucher]
+  const paymentMethod = useWatch({ control, name: "payment.payment_method" })
 
   return <>
     <FormField
@@ -178,13 +179,18 @@ function TabFormBody({ control, shop }: {
       name="payment.payment_details"
       rules={{}}
       render={({ field }) => (
+
         <FormItem className="grid grid-cols-3 items-center">
-          <FormLabel>Payment Chartstring</FormLabel>
-          <FormControl className="col-span-2">
-            <Input {...field} placeholder="XXXXX-XXXXX(-XXXXX)" />
-          </FormControl>
-          <FormDescription className="col-span-2 col-start-2"></FormDescription>
-          <FormMessage className="col-span-2 col-start-2" />
+          {paymentMethod === PaymentMethod.chartstring &&
+            <>
+              <FormLabel>Payment Chartstring</FormLabel>
+              <FormControl className="col-span-2">
+                <Input {...field} placeholder="XXXXX-XXXXX(-XXXXX)" />
+              </FormControl>
+              <FormDescription className="col-span-2 col-start-2"></FormDescription>
+              <FormMessage className="col-span-2 col-start-2" />
+            </>
+          }
         </FormItem>
       )} />
     < FormField
@@ -211,7 +217,7 @@ function TabFormBody({ control, shop }: {
               <SelectItem value="365">Annually (365 Days)</SelectItem>
             </SelectContent>
           </Select>
-          <FormDescription className="col-span-2 col-start-2">You will receive an itemized invoice at the end of every billing interval. Invoices can be requested before the end of the billing interval.</FormDescription>
+          <FormDescription className="col-span-2 col-start-2">You will receive an itemized invoice at the end of every billing interval and after the final day of the tab.</FormDescription>
           <FormMessage className="col-span-2 col-start-2" />
         </FormItem>
       )} />

@@ -91,6 +91,7 @@ type TabBase = z.output<typeof tabCreateSchema>
 export type TabOverview = TabBase & {
   verification_list: string[],
   pending_updates: TabBase | null,
+  is_pending_balance: boolean,
   shop_id: number,
   owner_id: number,
   id: number,
@@ -112,7 +113,8 @@ type ItemOrder = ItemOverview & {
 
 export type Bill = {
   id: number,
-  start_time: string,
+  start_date: string,
+  end_date: string,
   is_paid: boolean,
   items: ItemOrder[]
 }

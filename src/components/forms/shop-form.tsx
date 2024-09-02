@@ -10,6 +10,8 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { Input } from "../ui/input";
 import { CardForm } from "./card-form";
 import { ReactSelect } from "../ui/react-select";
+import { useOnErrorToast, useOnSuccessToast } from "@/api/toasts";
+import { DialogForm } from "./dialog-form";
 
 function getShopDefaults(shop?: Shop) {
   return {
@@ -28,22 +30,8 @@ export function useShopForm({ shop }: { shop?: Shop }) {
 
   const createShop = useCreateShop();
   const updateShop = useUpdateShop();
-  const onError = React.useCallback((error: Error) => {
-    if (!(error instanceof AxiosError) || !error.response || error.response.status !== 409) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "An unknown error has occured"
-      })
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "A shop with conflicting data already exists."
-      })
-    }
-  }, [])
-
+  const onSuccess = useOnSuccessToast();
+  const onError = useOnErrorToast();
   React.useEffect(() => {
     form.reset(getShopDefaults(shop), { keepValues: false })
   }, [shop])
@@ -52,22 +40,12 @@ export function useShopForm({ shop }: { shop?: Shop }) {
     const values = v as ShopCreate
     if (!shop?.id) {
       await createShop.mutateAsync({ data: values }, {
-        onSuccess: () => {
-          toast({
-            title: `Success!`,
-            duration: 5000
-          })
-        },
+        onSuccess: () => onSuccess(""),
         onError,
       })
     } else {
       await updateShop.mutateAsync({ shopId: shop.id, data: values }, {
-        onSuccess: () => {
-          toast({
-            title: `Success!`,
-            duration: 5000
-          })
-        },
+        onSuccess: () => onSuccess(""),
         onError,
       })
     }
@@ -86,6 +64,14 @@ export function ShopFormCard({ shop, paymentMethods }: { shop?: Shop, paymentMet
     <ShopFormBody control={form.control} shop={shop} paymentMethods={paymentMethods} />
   </CardForm>
 
+}
+
+export function ShopFormDialog({ children, shop, paymentMethods }: { children: React.ReactNode, shop?: Shop, paymentMethods: PaymentMethod[] }) {
+  const { form, onSubmit, title, desc } = useShopForm({ shop })
+
+  return <DialogForm form={form} title={title} desc={desc} trigger={children} onSubmit={onSubmit} shouldClose={!shop}>
+    <ShopFormBody control={form.control} shop={shop} paymentMethods={paymentMethods} />
+  </DialogForm>
 }
 
 function ShopFormBody({ control, paymentMethods }: {

@@ -1,11 +1,11 @@
 import { TabOverview, TabStatus } from "@/types/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "./ui/badge"
-import { Format24hTime, FormatDateMMDDYYYY, GetActiveDayAcronyms } from "@/util/dates"
+import { Format24hTime, FormatDateMMDDYYYY, GetActiveDayAcronyms, getFormattedDayFromUTC } from "@/util/dates"
 import { Button } from "./ui/button"
 import { Link } from "@tanstack/react-router"
 import React from "react"
-import { ExternalLink } from "lucide-react"
+import { BadgeAlert, BadgeCheck, BadgeDollarSign, ExternalLink } from "lucide-react"
 
 export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
   return React.useMemo(() => [
@@ -21,8 +21,13 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
       }
     },
     {
-      accessorKey: "organization",
-      header: "Organization",
+      id: "updates",
+      cell: ({ row }) => {
+        const tab = row.original
+        return <div className="font-bold text-center">
+          {tab.pending_updates ? <BadgeAlert /> : ""}
+        </div>
+      }
     },
     {
       accessorKey: "status",
@@ -34,6 +39,20 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
             variant={tab.status === TabStatus.pending ? "default" : "outline"}>{tab.status}</Badge>
         </div>
       }
+    },
+    {
+      accessorKey: "is_pending_balance",
+      header: () => <div className="">Balance</div>,
+      cell: ({ row }) => {
+        const tab = row.original
+        return <div className="text-center">
+          {tab.is_pending_balance ? <BadgeDollarSign className="fill-destructive " /> : <BadgeCheck />}
+        </div>
+      }
+    },
+    {
+      accessorKey: "organization",
+      header: "Organization",
     },
     {
       accessorKey: "active_days_of_wk",
@@ -48,7 +67,7 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
       header: () => <div className="">Start Date</div>,
       cell: ({ row }) => {
         const tab = row.original
-        return <div className="">{FormatDateMMDDYYYY(tab.start_date)}</div>
+        return <div className="">{getFormattedDayFromUTC(tab.start_date)}</div>
       }
     },
     {
@@ -56,7 +75,7 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
       header: () => <div className="">End Date</div>,
       cell: ({ row }) => {
         const tab = row.original
-        return <div className="">{FormatDateMMDDYYYY(tab.end_date)}</div>
+        return <div className="">{getFormattedDayFromUTC(tab.end_date)}</div>
       }
     },
     {
