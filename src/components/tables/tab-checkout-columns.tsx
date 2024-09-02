@@ -1,6 +1,6 @@
 import { TabOverview } from "@/types/types"
 import { ColumnDef } from "@tanstack/react-table"
-import { Format24hTime, FormatDateMMDDYYYY, GetActiveDayAcronyms, getFormattedDayFromUTC, getMinutes24hTime } from "@/util/dates"
+import { Format24hTime, GetActiveDayAcronyms, getFormattedDayFromUTC, getMinutes24hTime } from "@/util/dates"
 import { Button } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
 import React from "react"
