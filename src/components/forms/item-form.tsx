@@ -3,7 +3,7 @@ import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessa
 import { Input } from "../ui/input";
 import { Control, useForm } from "react-hook-form";
 import { PriceInput } from "@/components/ui/price-input";
-import { Category, CategoryOverview, Item, ItemOverview, SubstitutionGroup } from "@/types/types";
+import { CategoryOverview, Item, ItemOverview, SubstitutionGroup } from "@/types/types";
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -86,7 +86,7 @@ export function useItemForm({ shopId, item }: { shopId: number, item?: Item }) {
   return { form, onSubmit, title, desc }
 }
 
-export function ItemFormDialog({ children, shopId, item, categories, addons, substitutions }: { children: React.ReactNode, shopId: number, item?: Item, categories: CategoryOverview[] | Category[], addons: ItemOverview[], substitutions: SubstitutionGroup[] }) {
+export function ItemFormDialog({ children, shopId, item, categories, addons, substitutions }: { children: React.ReactNode, shopId: number, item?: Item, categories: CategoryOverview[], addons: ItemOverview[], substitutions: SubstitutionGroup[] }) {
   const { form, onSubmit, title, desc } = useItemForm({ shopId, item })
 
   return <DialogForm form={form} title={title} desc={desc} trigger={children} onSubmit={onSubmit} shouldClose={!item}>
@@ -94,7 +94,7 @@ export function ItemFormDialog({ children, shopId, item, categories, addons, sub
   </DialogForm>
 }
 
-export function ItemFormCard({ shopId, item, categories, addons, substitutions }: { shopId: number, item?: Item, categories: CategoryOverview[] | Category[], addons: ItemOverview[], substitutions: SubstitutionGroup[] }) {
+export function ItemFormCard({ shopId, item, categories, addons, substitutions }: { shopId: number, item?: Item, categories: CategoryOverview[], addons: ItemOverview[], substitutions: SubstitutionGroup[] }) {
   const { form, onSubmit, title, desc } = useItemForm({ shopId, item })
 
   return <CardForm form={form} title={title} desc={desc} onSubmit={onSubmit}>
@@ -106,7 +106,7 @@ export function ItemFormCard({ shopId, item, categories, addons, substitutions }
 function ItemFormBody({ control, categories, addons, substitutions }
   : {
     control: Control<ItemCreateInput>
-    categories: Category[] | CategoryOverview[],
+    categories: CategoryOverview[],
     addons: ItemOverview[],
     substitutions: SubstitutionGroup[]
   }) {

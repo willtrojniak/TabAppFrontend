@@ -13,7 +13,7 @@ import { useSubstitutionGroupColumns } from '@/components/substitution-groups-ta
 import { SubstitutionGroupFormDialog } from '@/components/forms/substitution-group-form'
 import { CreateButton } from '@/components/ui/create-button'
 import { getShopForIdQueryOptions } from '@/api/shops'
-import { useGetShopCategories } from '@/api/categories'
+import { getShopCategoriesQueryOptions, useGetShopCategories } from '@/api/categories'
 import { getShopSubstitutionsQueryOptions } from '@/api/substitutions'
 import { getShopItemsQueryOptions } from '@/api/items'
 import { getShopTabsQueryOptions } from '@/api/tabs'
@@ -28,6 +28,7 @@ export const Route = createFileRoute('/_auth/shops/$shopId/')({
 function ShopComponent() {
   const { shopId } = Route.useParams();
   const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
+  const { data: categoryOverviews } = useSuspenseQuery(getShopCategoriesQueryOptions(shopId))
   const categories = useGetShopCategories(shopId);
   const { data: substitutions } = useSuspenseQuery(getShopSubstitutionsQueryOptions(shopId))
   const { data: items } = useSuspenseQuery(getShopItemsQueryOptions(shopId))
@@ -71,7 +72,7 @@ function ShopComponent() {
           </div>
         </CardContent>
         <CardFooter>
-          <ItemFormDialog shopId={shopId} categories={categories} addons={items} substitutions={substitutions}>
+          <ItemFormDialog shopId={shopId} categories={categoryOverviews} addons={items} substitutions={substitutions}>
             <CreateButton>Create Item</CreateButton>
           </ItemFormDialog>
         </CardFooter>
