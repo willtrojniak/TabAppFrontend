@@ -1,11 +1,12 @@
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { TanstackRouterDevtools } from '@/components/dev/TanstackRouterDevtools'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient } from "@tanstack/react-query";
 import { Auth } from "../types/types";
 import { Toaster } from "@/components/ui/toaster";
 import { DndContext } from "@dnd-kit/core";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Suspense } from "react";
 
 export const Route = createRootRouteWithContext<{
   auth: Auth
@@ -23,7 +24,9 @@ function RootComponent() {
         <Outlet />
       </main>
     </div>
-    <TanStackRouterDevtools position="bottom-right" />
+    <Suspense>
+      <TanstackRouterDevtools position="bottom-right" />
+    </Suspense>
     <ReactQueryDevtools position="left" />
     <Toaster />
   </div>
