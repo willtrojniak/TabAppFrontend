@@ -74,13 +74,17 @@ export function useGetShopCategories(shopId: number) {
     items.forEach(item => {
       map.set(item.id, item)
     })
-    const data = categories.map((category, index) => ({
-      shop_id: shopId,
-      id: category.id,
-      name: category.name,
-      index: index,
-      items: category.item_ids.filter(itemId => map.has(itemId)).map(itemId => map.get(itemId)!)
-    } satisfies Category))
+    const data = categories.map((category, index) => {
+      const filteredItemIds = category.item_ids.filter(itemId => map.has(itemId))
+      return {
+        shop_id: shopId,
+        id: category.id,
+        name: category.name,
+        index: index,
+        items: filteredItemIds.map(itemId => map.get(itemId)!),
+        item_ids: filteredItemIds,
+      } satisfies Category
+    })
     return data
   }, [shopId, categories, items])
 }

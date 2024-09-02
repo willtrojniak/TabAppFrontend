@@ -40,7 +40,8 @@ export type Category = {
   index: number,
   shop_id: number,
   name: string,
-  items: ItemOverview[]
+  items: ItemOverview[],
+  item_ids: number[],
 }
 
 export type ItemOverview = z.output<typeof itemOverviewSchema>
