@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { API_BASE_URL } from '@/util/constants'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import GoogleButton from 'react-google-button'
 import { z } from 'zod'
@@ -29,7 +30,7 @@ function LoginComponent() {
         <CardDescription className='w-fit text-center'>Sign in to track the status of your tabs.</CardDescription>
       </CardHeader>
       <CardContent >
-        <a href={encodeURI(`http://127.0.0.1:3000/auth/google?redirect=${search.redirect}`)}><GoogleButton type='light' /></a>
+        <a href={encodeURI(`${API_BASE_URL}/auth/google?redirect=${search.redirect}`)}><GoogleButton type='light' /></a>
       </CardContent>
     </Card>
   </div>

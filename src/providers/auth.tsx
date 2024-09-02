@@ -3,6 +3,7 @@ import { Auth } from "../types/types";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { invalidateGetUser, useGetUser } from "../api/users";
+import { API_BASE_URL } from "@/util/constants";
 
 const AuthContext = React.createContext<Auth | null>(null);
 
@@ -12,7 +13,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = !!user;
 
   const logout = useCallback(async () => {
-    await axios.post('http://127.0.0.1:3000/logout')
+    await axios.post(`${API_BASE_URL}/logout`)
     invalidateGetUser(queryClient)
   }, [queryClient])
 
