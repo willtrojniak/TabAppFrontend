@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, CornerDownRight } from 'lucide-react';
-import { Format24hTime, FormatDateMMDDYYYY, GetActiveDayAcronyms, getFormattedDayFromUTC } from '@/util/dates';
+import { Format24hTime, FormatDateMMDDYYYY, GetActiveDayAcronyms } from '@/util/dates';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrencyUSD } from '@/util/currency';
 import React from 'react';
@@ -63,8 +63,8 @@ function TabComponent() {
         <span>{tab.billing_interval_days} days</span>
         <span>{tab.pending_updates?.billing_interval_days}</span>
         <span>Active Date(s):</span>
-        <span>{tab.start_date !== tab.end_date ? `${getFormattedDayFromUTC(tab.start_date)} - ${getFormattedDayFromUTC(tab.end_date)}` : getFormattedDayFromUTC(tab.start_date)}</span>
-        <span>{tab.pending_updates?.start_date !== tab.pending_updates?.end_date && tab.pending_updates ? `${getFormattedDayFromUTC(tab.pending_updates?.start_date)} - ${FormatDateMMDDYYYY(tab.pending_updates.end_date)}` : tab.pending_updates ? FormatDateMMDDYYYY(tab.pending_updates.start_date) : ""}</span>
+        <span>{tab.start_date !== tab.end_date ? `${FormatDateMMDDYYYY(tab.start_date)} - ${FormatDateMMDDYYYY(tab.end_date)}` : FormatDateMMDDYYYY(tab.start_date)}</span>
+        <span>{tab.pending_updates?.start_date !== tab.pending_updates?.end_date && tab.pending_updates ? `${FormatDateMMDDYYYY(tab.pending_updates?.start_date)} - ${FormatDateMMDDYYYY(tab.pending_updates.end_date)}` : tab.pending_updates ? FormatDateMMDDYYYY(tab.pending_updates.start_date) : ""}</span>
         <span>Time:</span>
         <span>{Format24hTime(tab.daily_start_time)} - {Format24hTime(tab.daily_end_time)}</span>
         <span>{tab.pending_updates ? `${Format24hTime(tab.pending_updates.daily_start_time)} - ${Format24hTime(tab.pending_updates.daily_end_time)}` : ""}</span>
@@ -104,7 +104,7 @@ function TabComponent() {
             <CollapsibleTrigger asChild className='mb-2'>
               <Button variant='ghost' className='gap-1'>
                 <Badge variant={bill.is_paid ? "secondary" : "destructive"}>{bill.is_paid ? "Paid" : "Unpaid"}</Badge>
-                {getFormattedDayFromUTC(bill.start_date)} - {getFormattedDayFromUTC(bill.end_date)}<ChevronsUpDown className='w-4 h-4' /></Button>
+                {FormatDateMMDDYYYY(bill.start_date)} - {FormatDateMMDDYYYY(bill.end_date)}<ChevronsUpDown className='w-4 h-4' /></Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className='border rounded-md mb-4 '>

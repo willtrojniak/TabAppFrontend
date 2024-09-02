@@ -1,6 +1,6 @@
 import { TabOverview } from "@/types/types"
 import { ColumnDef } from "@tanstack/react-table"
-import { Format24hTime, GetActiveDayAcronyms, getFormattedDayFromUTC, getMinutes24hTime } from "@/util/dates"
+import { Format24hTime, GetActiveDayAcronyms, FormatDateMMDDYYYY, getMinutes24hTime } from "@/util/dates"
 import { Button } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
 import React from "react"
@@ -71,7 +71,7 @@ export function useTabCheckoutColumns(shopId: number): ColumnDef<TabOverview>[] 
       header: () => <div className="">Start Date</div>,
       cell: ({ row }) => {
         const tab = row.original
-        return <div className="">{getFormattedDayFromUTC(tab.start_date)}</div>
+        return <div className="">{FormatDateMMDDYYYY(tab.start_date)}</div>
       }
     },
     {
@@ -79,7 +79,7 @@ export function useTabCheckoutColumns(shopId: number): ColumnDef<TabOverview>[] 
       header: () => <div className="">End Date</div>,
       cell: ({ row }) => {
         const tab = row.original
-        return <div className="">{getFormattedDayFromUTC(tab.end_date)}</div>
+        return <div className="">{FormatDateMMDDYYYY(tab.end_date)}</div>
       }
     },
     {

@@ -14,10 +14,6 @@ export function getMinutes24hTime(time: string) {
   }
 }
 
-export function getFormattedDayFromUTC(time: string) {
-  return new Date(time).toLocaleDateString()
-}
-
 export function Format24hTime(time: string) {
   const val = time.match(/^([01]\d|2[0-3])(:)([0-5]\d)$/) || [time]
   if (val.length > 1) {
