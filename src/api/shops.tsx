@@ -40,6 +40,7 @@ async function getShops() {
   return response.data;
 }
 
+
 export function getShopsQueryOptions() {
   return { queryKey: ['shops'], queryFn: getShops } satisfies QueryOptions
 }
@@ -50,6 +51,20 @@ export async function ensureShops(queryClient: QueryClient) {
 
 export function invalidateGetShops(queryClient: QueryClient) {
   queryClient.invalidateQueries({ queryKey: ['shops'] })
+}
+
+async function getShopsForUserId(userId: string) {
+  const url = encodeURI(`${API_BASE_URL}/api/${API_VERSION}/shops?userId=${userId}`)
+  const response = await axios.get<Shop[]>(url)
+  return response.data;
+}
+
+export function getShopsForUserIdQueryOptions(userId: string) {
+  return { queryKey: ['shops', { userId }], queryFn: () => getShopsForUserId(userId) } satisfies QueryOptions
+}
+
+export async function ensureShopsForUserId(queryClient: QueryClient, userId: string) {
+  return await queryClient.ensureQueryData(getShopsForUserIdQueryOptions(userId))
 }
 
 async function getShopForId(shopId: number) {

@@ -1,19 +1,21 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { ensureShops, getShopsQueryOptions } from '@/api/shops'
+import { ensureShopsForUserId, getShopsForUserIdQueryOptions } from '@/api/shops'
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ShopFormDialog } from '@/components/forms/shop-form';
 import { PaymentMethod } from '@/types/types';
 import { CreateButton } from '@/components/ui/create-button';
+import { useAuth } from '@/providers/auth';
 
 export const Route = createFileRoute('/_auth/shops/')({
   component: ShopsComponent,
   loader: ({ context }) => {
-    return ensureShops(context.queryClient);
+    return ensureShopsForUserId(context.queryClient, context.user.id);
   },
 })
 
 function ShopsComponent() {
-  const { data } = useSuspenseQuery(getShopsQueryOptions())
+  const { user } = useAuth();
+  const { data } = useSuspenseQuery(getShopsForUserIdQueryOptions(user!.id))
   return <div className='flex flex-col items-start gap-4 max-w-full'>
     <ShopFormDialog paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]}>
       <CreateButton>Create Shop</CreateButton>
