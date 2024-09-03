@@ -55,7 +55,7 @@ export type ItemVariant = {
 export type SubstitutionGroup = z.output<typeof substitutionGroupSchema>
 
 export type Item = ItemOverview & {
-  categories: CategoryOverview[]
+  categories: { name: string, id: number }[]
   variants: ItemVariant[]
   addons: ItemOverview[]
   substitution_groups: SubstitutionGroup[]
