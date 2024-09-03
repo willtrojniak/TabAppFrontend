@@ -1,8 +1,10 @@
-import { useGetShopCategories } from '@/api/categories'
+import { useDeleteCategory, useGetShopCategories } from '@/api/categories'
 import { getShopItemsQueryOptions } from '@/api/items'
 import { getShopSubstitutionsQueryOptions } from '@/api/substitutions'
+import { useOnErrorToast, useOnSuccessToast } from '@/api/toasts'
 import { CategoryTabSelect } from '@/components/category-items'
 import { CategoryFormDialog, useCategoryForm } from '@/components/forms/category-form'
+import { DialogDeleteForm } from '@/components/forms/dialog-delete-form'
 import { ItemFormDialog } from '@/components/forms/item-form'
 import { SortableInput } from '@/components/sortable-input'
 import { Button } from '@/components/ui/button'
@@ -14,7 +16,7 @@ import { ReactSelect } from '@/components/ui/react-select'
 import { Category, ItemOverview } from '@/types/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Save, Trash2 } from 'lucide-react'
+import { Save, Trash2, X } from 'lucide-react'
 import React from 'react'
 import { z } from 'zod'
 
@@ -43,6 +45,9 @@ function ItemsComponent() {
     nav({ search: { category: category?.id } })
     setSelectedCategory(category)
   }
+  const deleteCategory = useDeleteCategory()
+  const onError = useOnErrorToast()
+  const onSuccess = useOnSuccessToast()
 
   const handleSubmit = form.handleSubmit(async (data) => {
     try {
@@ -59,7 +64,6 @@ function ItemsComponent() {
             {!editing && <CategoryFormDialog shopId={shopId} items={items}><CreateButton disabled={editing}>Create Category</CreateButton></CategoryFormDialog>}
             {!editing && <ItemFormDialog shopId={shopId} categories={categories} substitutions={substitutions} addons={items}><CreateButton disabled={editing}>Create Item</CreateButton></ItemFormDialog>}
             {!editing && <EditButton disabled={!selectedCategory} onClick={() => setEditing(true)}> Edit Category</EditButton>}
-            {editing && <Button className='gap-2'><Save className='w-4 h-4' />  Save Changes</Button>}
             {editing && <>
               <FormField
                 control={form.control}
@@ -94,6 +98,21 @@ function ItemsComponent() {
                 )} />
             </>
             }
+            {editing && <DialogDeleteForm
+              title="Delete Category?"
+              onDelete={async () => {
+
+                deleteCategory.mutate({ shopId, categoryId: selectedCategory!.id }, {
+                  onError,
+                  onSuccess: () => {
+                    onSuccess("Successfully deleted category.")
+                    setEditing(false)
+                    setSelectedCategory(undefined)
+                  }
+                })
+              }} />}
+            {editing && <Button className='gap-2' type='reset' variant='outline' onClick={() => { form.reset(); setEditing(false) }}><X className='w-4 h-4' />  Discard Changes</Button>}
+            {editing && <Button className='gap-2'><Save className='w-4 h-4' />  Save Changes</Button>}
           </div>
           <CategoryTabSelect categories={categories} value={selectedCategory} onValueChange={onCategoryChange} disabled={editing} />
           <div className='grid  grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2'>
