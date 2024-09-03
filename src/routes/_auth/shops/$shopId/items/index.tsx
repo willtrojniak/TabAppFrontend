@@ -9,11 +9,12 @@ import { Button } from '@/components/ui/button'
 import { CreateButton } from '@/components/ui/create-button'
 import { EditButton } from '@/components/ui/edit-button'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import { ReactSelect } from '@/components/ui/react-select'
 import { Category, ItemOverview } from '@/types/types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Save } from 'lucide-react'
+import { Save, Trash2 } from 'lucide-react'
 import React from 'react'
 import { z } from 'zod'
 
@@ -52,34 +53,47 @@ function ItemsComponent() {
 
   return <div className='flex flex-col items-start gap-2'>
     <Form {...form}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} autoComplete='off'>
         <div className='flex flex-col items-start gap-2'>
           <div className='flex flex-row flex-wrap gap-2'>
             {!editing && <CategoryFormDialog shopId={shopId} items={items}><CreateButton disabled={editing}>Create Category</CreateButton></CategoryFormDialog>}
             {!editing && <ItemFormDialog shopId={shopId} categories={categories} substitutions={substitutions} addons={items}><CreateButton disabled={editing}>Create Item</CreateButton></ItemFormDialog>}
             {!editing && <EditButton disabled={!selectedCategory} onClick={() => setEditing(true)}> Edit Category</EditButton>}
             {editing && <Button className='gap-2'><Save className='w-4 h-4' />  Save Changes</Button>}
-            {editing && <FormField
-              control={form.control}
-              name="item_ids"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <ReactSelect
-                      {...field}
-                      isMulti
-                      options={items}
-                      getOptionValue={(i) => { const item = i as ItemOverview; return item.id.toString() }}
-                      getOptionLabel={(i) => { const item = i as ItemOverview; return item.name }}
-                      controlShouldRenderValue={false}
-                      placeholder="+ Add Item"
-                      isClearable={false}
-                      backspaceRemovesValue={false}
-                      className='min-w-48'
-                    />
-                  </FormControl>
-                </FormItem>
-              )} />}
+            {editing && <>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input {...field} placeholder={selectedCategory?.name} />
+                    </FormControl>
+                  </FormItem>
+                )} />
+              <FormField
+                control={form.control}
+                name="item_ids"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <ReactSelect
+                        {...field}
+                        isMulti
+                        options={items}
+                        getOptionValue={(i) => { const item = i as ItemOverview; return item.id.toString() }}
+                        getOptionLabel={(i) => { const item = i as ItemOverview; return item.name }}
+                        controlShouldRenderValue={false}
+                        placeholder="+ Add Item"
+                        isClearable={false}
+                        backspaceRemovesValue={false}
+                        className='min-w-48'
+                      />
+                    </FormControl>
+                  </FormItem>
+                )} />
+            </>
+            }
           </div>
           <CategoryTabSelect categories={categories} value={selectedCategory} onValueChange={onCategoryChange} disabled={editing} />
           <div className='grid  grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2'>
@@ -97,6 +111,7 @@ function ItemsComponent() {
                   render={(item) => (
                     <Link key={item.id} to='/shops/$shopId/items/$itemId' params={{ shopId, itemId: item.id }} disabled={editing}><Button variant="secondary" className='min-w-32 w-full' type='button'>{item.name}</Button></Link>
                   )}
+                  trashComponent={<div className='min-h-32 h-full col-span-full outline-dashed outline-destructive flex items-center'><Trash2 className='m-auto stroke-destructive' /></div>}
                 />
               )}
             />

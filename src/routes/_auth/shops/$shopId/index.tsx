@@ -7,8 +7,6 @@ import { useItemColumns } from '@/components/item-table-columns'
 import { ItemFormDialog } from '@/components/forms/item-form'
 import { ShopFormCard } from '@/components/forms/shop-form'
 import { PaymentMethod } from '@/types/types'
-import { CategoryFormDialog } from '@/components/forms/category-form'
-import { useCategoryColumns } from '@/components/category-table-columns'
 import { useSubstitutionGroupColumns } from '@/components/substitution-groups-table-columns'
 import { SubstitutionGroupFormDialog } from '@/components/forms/substitution-group-form'
 import { CreateButton } from '@/components/ui/create-button'
@@ -34,33 +32,19 @@ function ShopComponent() {
   const { data: tabs } = useSuspenseQuery(getShopTabsQueryOptions(shopId))
 
   const itemCols = useItemColumns(shopId)
-  const categoryCols = useCategoryColumns(shopId)
   const substitutionGroupCols = useSubstitutionGroupColumns(shopId)
   const tabCols = useTabColumns(shopId)
 
   return <div className='flex flex-col items-start gap-4 max-w-full'>
     <div className='grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 '>
-      <div className='row-span-2'><ShopFormCard shop={shop} paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]} /></div>
-      <Card className='row-span-1 row-start-3 col-start-1'>
+      <Card className='row-span-1 col-start-1'>
         <CardHeader className='pb-3'>
           <CardTitle>Orders</CardTitle>
-          <CardDescription>Add items onto tab orders.</CardDescription>
+          <CardDescription>Add item orders onto tabs.</CardDescription>
         </CardHeader>
         <CardFooter><Link to='/shops/$shopId/checkout' params={{ shopId }}><Button className='gap-2'>Go to checkout<ExternalLink className='w-4 h-4' /></Button></Link></CardFooter>
       </Card>
-      <Card className='row-span-3'>
-        <CardHeader>
-          <CardTitle><Link to='/shops/$shopId/items' params={{ shopId }} className='hover:underline underline-offset-4'>Categories <ExternalLink className='w-4 h-4 mb-2 inline' /></Link></CardTitle>
-        </CardHeader>
-        <CardContent className='flex flex-col flex-1 max-h-96'>
-          <DataTable columns={categoryCols} data={categories} />
-        </CardContent>
-        <CardFooter>
-          <CategoryFormDialog shopId={shopId} items={items}>
-            <CreateButton>Create Category</CreateButton>
-          </CategoryFormDialog>
-        </CardFooter>
-      </Card>
+      <div className='row-span-2 row-start-2'><ShopFormCard shop={shop} paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]} /></div>
       <Card className='row-span-3'>
         <CardHeader>
           <CardTitle><Link to='/shops/$shopId/items' params={{ shopId }} className='hover:underline underline-offset-4'>Items <ExternalLink className='w-4 h-4 mb-2 inline' /></Link></CardTitle>
