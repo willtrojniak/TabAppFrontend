@@ -36,7 +36,7 @@ function ShopComponent() {
   const tabCols = useTabColumns(shopId)
 
   return <div className='flex flex-col items-start gap-4 max-w-full'>
-    <div className='grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 '>
+    <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 '>
       <Card className='row-span-1 col-start-1'>
         <CardHeader className='pb-3'>
           <CardTitle>Orders</CardTitle>
