@@ -1,6 +1,6 @@
 import { DndContext, DragOverlay, DragStartEvent, DragOverEvent, UniqueIdentifier, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import React, { act } from "react";
+import React from "react";
 import { Sortable } from "./ui/sortable";
 import { Droppable } from "./ui/droppable";
 

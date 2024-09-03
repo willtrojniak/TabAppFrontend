@@ -5,7 +5,7 @@ import { Format24hTime, GetActiveDayAcronyms, FormatDateMMDDYYYY } from "@/util/
 import { Button } from "./ui/button"
 import { Link } from "@tanstack/react-router"
 import React from "react"
-import { BadgeAlert, BadgeCheck, BadgeDollarSign, ExternalLink } from "lucide-react"
+import { BadgeAlert, Check, ExternalLink } from "lucide-react"
 
 export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
   return React.useMemo(() => [
@@ -42,11 +42,11 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
     },
     {
       accessorKey: "is_pending_balance",
-      header: () => <div className="">Balance</div>,
+      header: () => <div className="">Paid</div>,
       cell: ({ row }) => {
         const tab = row.original
-        return <div className="text-center">
-          {tab.is_pending_balance ? <BadgeDollarSign className="fill-destructive " /> : <BadgeCheck />}
+        return <div className="flex justify-center items-center">
+          {tab.is_pending_balance ? <span className="font-bold text-destructive text-lg">!</span> : <Check className="w-4 h-4" />}
         </div>
       }
     },
