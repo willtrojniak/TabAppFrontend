@@ -17,21 +17,22 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
-  return <DndContext><div className="flex min-h-screen w-full, flex-col bg-muted/40">
-    <div className="flex flex-col max-w-full sm:gap-4 sm:py-4">
-      <main className="flex flex-col max-w-full gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-        <Breadcrumbs />
-        <Outlet />
-      </main>
+  return <DndContext>
+    <div className="flex min-h-screen w-full, flex-col bg-muted/40">
+      <div className="flex flex-col max-w-full sm:gap-4 sm:py-4">
+        <main className="flex flex-col max-w-full gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+          <Breadcrumbs />
+          <Outlet />
+        </main>
+      </div>
+      <Suspense>
+        <TanstackRouterDevtools position="bottom-right" />
+      </Suspense>
+      <ReactQueryDevtools position="left" />
+      <Toaster />
+      <div className="text-xs p-2 mt-auto">
+        Developed by <a href="https://www.wtrojniak.ca" className="underline underline-offset-2">Will Trojniak</a>
+      </div>
     </div>
-    <Suspense>
-      <TanstackRouterDevtools position="bottom-right" />
-    </Suspense>
-    <ReactQueryDevtools position="left" />
-    <Toaster />
-    <div className="text-xs p-2 absolute bottom-0">
-      Developed by <a href="https://www.wtrojniak.ca" className="underline underline-offset-2">Will Trojniak</a>
-    </div>
-  </div>
   </DndContext>
 }
