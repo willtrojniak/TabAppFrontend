@@ -87,7 +87,9 @@ export type ItemVariantCreate = z.infer<typeof itemVariantCreateSchema>
 export const itemCreateSchema = z.object({
   name: z.string().min(1).max(64),
   base_price: price,
-  category_ids: z.array(categoryOverviewSchema.transform(c => c.id)),
+  category_ids: z.array(z.object({
+    id: z.number().min(1)
+  }).transform(c => c.id)),
   substitution_group_ids: z.array(substitutionGroupSchema.transform(g => g.id)),
   addon_ids: z.array(itemOverviewSchema.transform(a => a.id))
 })
