@@ -29,7 +29,7 @@ function RootComponent() {
     </Suspense>
     <ReactQueryDevtools position="left" />
     <Toaster />
-    <div className="text-xs p-2">
+    <div className="text-xs p-2 absolute bottom-0">
       Developed by <a href="https://www.wtrojniak.ca" className="underline underline-offset-2">Will Trojniak</a>
     </div>
   </div>
