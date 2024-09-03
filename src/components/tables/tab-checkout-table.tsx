@@ -110,7 +110,7 @@ export function TabCheckoutTable({ shopId, data, selectedTab, setSelectedTab }: 
               checked={table.getColumn('active')?.getFilterValue() as boolean ?? true}
               onCheckedChange={(val) => table.getColumn('active')?.setFilterValue(val)}
             >
-              Active Tabs
+              Active
             </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
