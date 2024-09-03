@@ -18,7 +18,7 @@ export function Format24hTime(time: string) {
   const val = time.match(/^([01]\d|2[0-3])(:)([0-5]\d)$/) || [time]
   if (val.length > 1) {
     const ampm = parseInt(val[1]) < 12 ? 'AM' : 'PM'
-    const hr = parseInt(val[1]) % 12
+    const hr = parseInt(val[1]) % 12 === 0 ? 12 : parseInt(val[1]) % 12
     const mn = val[3]
     return `${hr}:${mn} ${ampm}`
   } else {
