@@ -52,13 +52,13 @@ function TabComponent() {
     })
   }
 
-  return <div className='flex flex-col gap-4 items-start'>
+  return <div className='flex flex-row flex-wrap gap-4 items-start'>
     <Card>
       <CardHeader><CardTitle>{tab.display_name}</CardTitle></CardHeader>
       <CardContent className='grid grid-cols-3 gap-4'>
         <span>Status:</span>
         <span><Badge variant={tab.status === TabStatus.pending ? "default" : "outline"}> {tab.status}</Badge></span>
-        <span className='font-bold'>Pending Updates</span>
+        <span className='font-bold'>{tab.pending_updates ? "Pending Updates" : "No Updates"}</span>
         <span>Organization:</span>
         <span>{tab.organization}</span>
         <span>{tab.pending_updates?.organization}</span>
@@ -110,7 +110,7 @@ function TabComponent() {
       </CardFooter>
     </Card>
     <Card className='flex flex-col items-start max-w-full overflow-hidden'>
-      <CardHeader><CardTitle>Tab Bills</CardTitle></CardHeader>
+      <CardHeader><CardTitle>Bills</CardTitle></CardHeader>
       <CardContent className='max-w-full flex flex-col items-start gap-6'>
         {tab.bills.length === 0 && <div>No data to display</div>}
         {tab.bills.map((bill) => {
