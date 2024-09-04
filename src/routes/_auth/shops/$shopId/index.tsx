@@ -1,21 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { DataTable } from '@/components/data-table'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { useItemColumns } from '@/components/item-table-columns'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ShopFormCard } from '@/components/forms/shop-form'
 import { PaymentMethod } from '@/types/types'
-import { useSubstitutionGroupColumns } from '@/components/substitution-groups-table-columns'
-import { SubstitutionGroupFormDialog } from '@/components/forms/substitution-group-form'
-import { CreateButton } from '@/components/ui/create-button'
 import { getShopForIdQueryOptions } from '@/api/shops'
-import { getShopSubstitutionsQueryOptions } from '@/api/substitutions'
-import { getShopItemsQueryOptions } from '@/api/items'
-import { getShopTabsQueryOptions } from '@/api/tabs'
 import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { TabFormSheet } from '@/components/forms/tab-form'
-import { TabTable } from '@/components/tables/tab-table'
 
 export const Route = createFileRoute('/_auth/shops/$shopId/')({
   component: ShopComponent
@@ -24,59 +14,32 @@ export const Route = createFileRoute('/_auth/shops/$shopId/')({
 function ShopComponent() {
   const { shopId } = Route.useParams();
   const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
-  const { data: substitutions } = useSuspenseQuery(getShopSubstitutionsQueryOptions(shopId))
-  const { data: items } = useSuspenseQuery(getShopItemsQueryOptions(shopId))
-  const { data: tabs } = useSuspenseQuery(getShopTabsQueryOptions(shopId))
 
-  const itemCols = useItemColumns(shopId)
-  const substitutionGroupCols = useSubstitutionGroupColumns(shopId)
 
   return <div className='flex flex-col items-start gap-4 max-w-full'>
     <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 '>
       <Card className='row-span-1 col-start-1'>
         <CardHeader className='pb-3'>
-          <CardTitle>Orders</CardTitle>
-          <CardDescription>Add item orders onto tabs.</CardDescription>
+          <CardTitle>Checkout</CardTitle>
+          <CardDescription>Add orders onto tabs.</CardDescription>
         </CardHeader>
         <CardFooter><Link to='/shops/$shopId/checkout' params={{ shopId }}><Button className='gap-2'>Go to checkout<ExternalLink className='w-4 h-4' /></Button></Link></CardFooter>
       </Card>
-      <div className='row-span-2 row-start-2'><ShopFormCard shop={shop} paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]} /></div>
-      <Card className='row-span-3'>
+      <Card className='row-span-1 col-start-1 row-start-2'>
         <CardHeader>
-          <CardTitle><Link to='/shops/$shopId/items' params={{ shopId }} className='hover:underline underline-offset-4'>Items <ExternalLink className='w-4 h-4 mb-2 inline' /></Link></CardTitle>
+          <CardTitle>Items</CardTitle>
+          <CardDescription>Manage items and categories.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className='flex flex-col max-h-96'>
-            <DataTable columns={itemCols} data={items} />
-          </div>
-        </CardContent>
+        <CardFooter><Link to='/shops/$shopId/items' params={{ shopId }}><Button className='gap-2'>Go to items<ExternalLink className='w-4 h-4' /></Button></Link></CardFooter>
       </Card>
-      <Card className='row-span-3'>
+      <Card className='row-span-1 col-start-1 row-start-3'>
         <CardHeader>
-          <CardTitle>Substitution Groups</CardTitle>
+          <CardTitle>Tabs</CardTitle>
+          <CardDescription>Search through, manage, and create tabs.</CardDescription>
         </CardHeader>
-        <CardContent className='flex flex-col max-h-96'>
-          <DataTable columns={substitutionGroupCols} data={substitutions} />
-        </CardContent>
-        <CardFooter>
-          <SubstitutionGroupFormDialog shopId={shopId} items={items}>
-            <CreateButton> Create Substitution Group</CreateButton>
-          </SubstitutionGroupFormDialog>
-        </CardFooter>
+        <CardFooter><Link to='/shops/$shopId/tabs' params={{ shopId }}><Button className='gap-2'>Go to tabs<ExternalLink className='w-4 h-4' /></Button></Link></CardFooter>
       </Card>
+      <div className='row-span-3'><ShopFormCard shop={shop} paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]} /></div>
     </div>
-    <Card className='max-w-full overflow-x-auto'>
-      <CardHeader>
-        <CardTitle>Tabs</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <TabTable tabs={tabs} shopId={shopId} />
-      </CardContent>
-      <CardFooter>
-        <TabFormSheet shop={shop}>
-          <CreateButton>Create Tab</CreateButton>
-        </TabFormSheet>
-      </CardFooter>
-    </Card>
   </div >
 }
