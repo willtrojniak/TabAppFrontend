@@ -114,6 +114,24 @@ export function TabTable({ shopId, tabs }: {
               onCheckedChange={(val) => table.getColumn('status')?.setFilterValue((prev?: string[]) => { return val ? prev ? [...prev, TabStatus.closed] : [TabStatus.closed] : prev?.filter(v => v !== TabStatus.closed) })}
             >Closed</DropdownMenuCheckboxItem>
             <DropdownMenuSeparator />
+            <DropdownMenuLabel>Dates</DropdownMenuLabel>
+            {/* TODO: Implement */}
+            <DropdownMenuCheckboxItem
+              disabled
+              checked={false}
+              onCheckedChange={() => { }}
+            >Upcoming</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem
+              disabled
+              checked={false}
+              onCheckedChange={() => { }}
+            >Current</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem
+              disabled
+              checked={false}
+              onCheckedChange={() => { }}
+            >Ended</DropdownMenuCheckboxItem>
+            <DropdownMenuSeparator />
             <DropdownMenuLabel>Balance</DropdownMenuLabel>
             <DropdownMenuCheckboxItem
               checked={(table.getColumn('is_pending_balance')?.getFilterValue() as boolean[])?.includes(true) ?? false}
