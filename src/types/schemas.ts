@@ -154,7 +154,7 @@ export const tabCreateSchema = z.object({
     if (val.payment_method === PaymentMethod.chartstring && val.payment_details === "") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Chartstring is required for selected payment method.",
+        message: "Chartstring is required for selected payment method",
         path: ["payment_details"]
       })
     }
@@ -163,10 +163,10 @@ export const tabCreateSchema = z.object({
       payment_details: val.payment_method === PaymentMethod.in_person ? "" : val.payment_details
     }
   }),
-  billing_interval_days: z.number().min(1, { message: "Billing interval must be at least one day." }).max(365),
+  billing_interval_days: z.number().min(1, { message: "Billing interval must be at least one day" }).max(365),
   dates: z.object({
-    from: z.string({ message: "Required" }).date("Invalid Date"),
-    to: z.string({ message: "Required" }).date("Invalid Date")
+    from: z.string({ message: "Required" }).date("Invalid date"),
+    to: z.string({ message: "Required" }).date("Invalid date")
   }, { message: "Required" }),
   times: z.object({
     daily_start_time: HHMMTime,
@@ -176,12 +176,12 @@ export const tabCreateSchema = z.object({
     if (getMinutes24hTime(val.daily_start_time) >= getMinutes24hTime(val.daily_end_time)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "End time must be after start time.",
+        message: "End time must be after start time",
         path: ["daily_end_time"]
       })
     }
   }),
-  active_days_of_wk: z.number().min(1, { message: "At least one day must be active." }).max(127),
+  active_days_of_wk: z.number().min(1, { message: "At least one day must be active" }).max(127),
   dollar_limit_per_order: price,
   verification_method: z.nativeEnum(VerificationMethod, { message: "Invalid value" }),
   verification_list: z.string().transform(s => s.split('\n').filter(entry => entry !== "")).pipe(z.array(z.string().trim().email({ message: "Invalid email" }))),
