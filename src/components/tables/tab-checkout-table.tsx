@@ -4,9 +4,6 @@ import { useTabCheckoutColumns } from "./tab-checkout-columns";
 import { TabOverview } from "@/types/types";
 import React from "react";
 import { Input } from "../ui/input";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { ListFilter } from "lucide-react";
 import { fuzzyFilterTab, fuzzySortTab } from "./tab-table";
 import { Toggle } from "../ui/toggle";
 
