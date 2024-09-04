@@ -43,6 +43,7 @@ export function SortableInput<T extends { id: UniqueIdentifier }>({ value, onCha
         </Sortable>
       ))}
     </SortableContext>
+    {activeItem && trashComponent && <div className="h-16 col-span-full" />}
     <Droppable id={"_sortable_trash"}>
       {activeItem && trashComponent}
     </Droppable>
