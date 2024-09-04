@@ -1,5 +1,5 @@
 import { ItemCreate, ItemCreateInput, itemCreateSchema } from "@/types/schemas";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Control, useForm } from "react-hook-form";
 import { PriceInput } from "@/components/ui/price-input";
@@ -98,7 +98,9 @@ export function ItemFormCard({ shopId, item, categories, addons, substitutions }
   const { form, onSubmit, title, desc } = useItemForm({ shopId, item })
 
   return <CardForm form={form} title={title} desc={desc} onSubmit={onSubmit}>
-    <ItemFormBody control={form.control} categories={categories} addons={addons} substitutions={substitutions} />
+    <div className="flex flex-col gap-2 items-start">
+      <ItemFormBody control={form.control} categories={categories} addons={addons} substitutions={substitutions} />
+    </div>
   </CardForm>
 
 }
@@ -111,87 +113,101 @@ function ItemFormBody({ control, categories, addons, substitutions }
     substitutions: SubstitutionGroup[]
   }) {
 
-  return <>
+  return <div className="grid md:grid-cols-3 gap-4">
     <FormField
       control={control}
       name="name"
       rules={{}}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="grid grid-cols-subgrid col-span-full items-center">
           <FormLabel>Name</FormLabel>
-          <FormControl>
+          <FormControl className="col-span-2">
             <Input {...field} placeholder="i.e. Latte" />
           </FormControl>
-          <FormDescription>Variant name.</FormDescription>
-          <FormMessage />
+          <FormMessage className="col-span-2 col-start-2" />
         </FormItem>
       )} />
     <FormField
       control={control}
       name="base_price"
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>Price</FormLabel>
-          <FormControl>
-            <PriceInput {...field} placeholder="4.50" />
-          </FormControl>
-          <FormDescription>The item's base price.</FormDescription>
-          <FormMessage />
+        <FormItem className="grid grid-cols-subgrid col-span-full items-center">
+          <div>
+            <FormLabel>Price</FormLabel>
+          </div>
+          <div className="col-span-2 flex flex-col gap-2">
+            <FormControl>
+              <PriceInput {...field} placeholder="4.50" />
+            </FormControl>
+          </div>
+          <FormMessage className="col-span-2 col-start-2" />
         </FormItem>
       )} />
     <FormField
       control={control}
       name="category_ids"
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>Categories</FormLabel>
-          <FormControl>
-            <ReactSelect
-              {...field}
-              isMulti
-              options={categories}
-              getOptionValue={(o) => { const category = o as CategoryOverview; return category.id.toString() }}
-              getOptionLabel={(o) => { const category = o as CategoryOverview; return category.name }}
-            />
-          </FormControl>
-          <FormMessage />
+        <FormItem className="grid grid-cols-subgrid col-span-full items-center">
+          <div>
+            <FormLabel>Categories</FormLabel>
+          </div>
+          <div className="col-span-2">
+            <FormControl>
+              <ReactSelect
+                {...field}
+                isMulti
+                options={categories}
+                getOptionValue={(o) => { const category = o as CategoryOverview; return category.id.toString() }}
+                getOptionLabel={(o) => { const category = o as CategoryOverview; return category.name }}
+              />
+            </FormControl>
+          </div>
+          <FormMessage className="col-span-2 col-start-2" />
         </FormItem>
       )} />
     <FormField
       control={control}
       name="substitution_group_ids"
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>Substitutions</FormLabel>
-          <FormControl>
-            <SortableMultiSelect
-              {...field}
-              isMulti
-              options={substitutions}
-              getOptionValue={(o) => { const group = o as SubstitutionGroup; return group.id.toString() }}
-              getOptionLabel={(o) => { const group = o as SubstitutionGroup; return group.name }}
-            />
-          </FormControl>
-          <FormMessage />
+        <FormItem className="grid grid-cols-subgrid col-span-full items-center">
+          <div>
+            <FormLabel>Substitutions</FormLabel>
+          </div>
+          <div className="col-span-2">
+            <FormControl>
+              <SortableMultiSelect
+                {...field}
+                isMulti
+                options={substitutions}
+                getOptionValue={(o) => { const group = o as SubstitutionGroup; return group.id.toString() }}
+                getOptionLabel={(o) => { const group = o as SubstitutionGroup; return group.name }}
+              />
+            </FormControl>
+          </div>
+          <FormMessage className="col-span-2 col-start-2" />
         </FormItem>
       )} />
     <FormField
       control={control}
       name="addon_ids"
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>Addons</FormLabel>
-          <FormControl>
-            <SortableMultiSelect
-              {...field}
-              isMulti
-              options={addons}
-              getOptionValue={(o) => { const item = o as ItemOverview; return item.id.toString() }}
-              getOptionLabel={(o) => { const item = o as ItemOverview; return item.name }}
-            />
-          </FormControl>
-          <FormMessage />
+        <FormItem className="grid grid-cols-subgrid col-span-full items-center">
+          <div>
+            <FormLabel>Addons</FormLabel>
+          </div>
+          <div className="col-span-2">
+            <FormControl>
+              <SortableMultiSelect
+                {...field}
+                isMulti
+                options={addons}
+                getOptionValue={(o) => { const item = o as ItemOverview; return item.id.toString() }}
+                getOptionLabel={(o) => { const item = o as ItemOverview; return item.name }}
+              />
+            </FormControl>
+          </div>
+          <FormMessage className="col-span-2 col-start-2" />
         </FormItem>
       )} />
-  </>
+  </div>
 }
