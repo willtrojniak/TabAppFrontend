@@ -1,11 +1,12 @@
 import { TabOverview, TabStatus } from "@/types/types"
 import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "./ui/badge"
 import { Format24hTime, GetActiveDayAcronyms, FormatDateMMDDYYYY } from "@/util/dates"
-import { Button } from "./ui/button"
+import { Button } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
 import React from "react"
 import { BadgeAlert, Check, ExternalLink } from "lucide-react"
+import { Badge } from "../ui/badge"
+import { filterInArray } from "./table"
 
 export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
   return React.useMemo(() => [
@@ -18,7 +19,8 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
       cell: ({ row }) => {
         const tab = row.original
         return <Button asChild variant="link"><Link to="/shops/$shopId/tabs/$tabId" params={{ shopId, tabId: tab.id }}>{tab.display_name}<ExternalLink className="ml-2 w-4 h-4" /></Link></Button>
-      }
+      },
+      sortingFn: 'fuzzy',
     },
     {
       id: "updates",
@@ -38,17 +40,19 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
           <Badge
             variant={tab.status === TabStatus.pending ? "default" : "outline"}>{tab.status}</Badge>
         </div>
-      }
+      },
+      filterFn: filterInArray
     },
     {
       accessorKey: "is_pending_balance",
-      header: () => <div className="">Paid</div>,
+      header: () => <div className="">Balance</div>,
       cell: ({ row }) => {
         const tab = row.original
         return <div className="flex justify-center items-center">
           {tab.is_pending_balance ? <span className="font-bold text-destructive text-lg">!</span> : <Check className="w-4 h-4" />}
         </div>
-      }
+      },
+      filterFn: filterInArray
     },
     {
       accessorKey: "organization",
@@ -105,7 +109,8 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
     },
     {
       accessorKey: "payment_method",
-      header: "Payment Method"
+      header: "Payment Method",
+      filterFn: filterInArray
     },
     {
       accessorKey: "payment_details",
@@ -115,5 +120,5 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
         return tab.payment_details ?? "None"
       }
     },
-  ], [shopId])
+  ] satisfies ColumnDef<TabOverview>[], [shopId])
 }

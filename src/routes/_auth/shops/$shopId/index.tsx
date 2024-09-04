@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { DataTable } from '@/components/data-table'
-import { useTabColumns } from '@/components/tab-table-columns'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useItemColumns } from '@/components/item-table-columns'
 import { ItemFormDialog } from '@/components/forms/item-form'
@@ -18,6 +17,7 @@ import { getShopTabsQueryOptions } from '@/api/tabs'
 import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TabFormSheet } from '@/components/forms/tab-form'
+import { TabTable } from '@/components/tables/tab-table'
 
 export const Route = createFileRoute('/_auth/shops/$shopId/')({
   component: ShopComponent
@@ -33,7 +33,6 @@ function ShopComponent() {
 
   const itemCols = useItemColumns(shopId)
   const substitutionGroupCols = useSubstitutionGroupColumns(shopId)
-  const tabCols = useTabColumns(shopId)
 
   return <div className='flex flex-col items-start gap-4 max-w-full'>
     <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 '>
@@ -79,7 +78,7 @@ function ShopComponent() {
         <CardTitle>Tabs</CardTitle>
       </CardHeader>
       <CardContent>
-        <DataTable columns={tabCols} data={tabs} />
+        <TabTable tabs={tabs} shopId={shopId} />
       </CardContent>
       <CardFooter>
         <TabFormSheet shop={shop}>

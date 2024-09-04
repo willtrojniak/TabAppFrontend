@@ -31,7 +31,6 @@ async function getUser() {
         return null;
       }
     }
-    console.error("Error fetching user data", error)
     return null;
   }
 }

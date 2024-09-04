@@ -1,12 +1,13 @@
 import { TabOverview } from "@/types/types"
 import { ColumnDef } from "@tanstack/react-table"
-import { Format24hTime, GetActiveDayAcronyms, FormatDateMMDDYYYY, getMinutes24hTime } from "@/util/dates"
+import { Format24hTime, GetActiveDayAcronyms, FormatDateMMDDYYYY } from "@/util/dates"
 import { Button } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
 import React from "react"
 import { ExternalLink, Eye } from "lucide-react"
 import { formatCurrencyUSD } from "@/util/currency"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { isTabActiveNow } from "@/util/tabs"
 
 export function useTabCheckoutColumns(shopId: number): ColumnDef<TabOverview>[] {
   return React.useMemo(() => [
@@ -103,18 +104,8 @@ export function useTabCheckoutColumns(shopId: number): ColumnDef<TabOverview>[] 
       id: "active",
       filterFn: (row, _, filterValue: boolean) => {
         const tab = row.original
-        const startDate = Date.parse(tab.start_date)
-        const endDate = Date.parse(tab.end_date)
-        const startMin = getMinutes24hTime(tab.daily_start_time)
-        const endMin = getMinutes24hTime(tab.daily_end_time)
 
-        const now = new Date()
-        const time = now.getMinutes() + now.getHours() * 60;
-        const day = now.setUTCHours(0, 0, 0, 0)
-
-
-
-        return !filterValue || (day > startDate && day < endDate && time > startMin && time < endMin)
+        return !filterValue || isTabActiveNow(tab)
 
       }
     }

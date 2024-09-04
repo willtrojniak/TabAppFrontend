@@ -1,47 +1,14 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
-import { ColumnFiltersState, FilterFn, flexRender, getCoreRowModel, getFilteredRowModel, SortingFn, sortingFns, useReactTable } from "@tanstack/react-table";
+import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
 import { useTabCheckoutColumns } from "./tab-checkout-columns";
 import { TabOverview } from "@/types/types";
 import React from "react";
 import { Input } from "../ui/input";
-import { compareItems, RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { ListFilter } from "lucide-react";
-
-declare module '@tanstack/react-table' {
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>
-  }
-
-  interface SortingFns {
-    fuzzy: SortingFn<unknown>
-  }
-
-  interface FilterMeta {
-    itemRank: RankingInfo
-  }
-}
-
-const fuzzyFilterTab: FilterFn<TabOverview> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value)
-  addMeta({
-    itemRank
-  })
-  return itemRank.passed
-}
-
-const fuzzySortTab: SortingFn<TabOverview> = (rowA, rowB, columnId) => {
-  let dir = 0;
-  if (rowA.columnFiltersMeta[columnId]) {
-    dir = compareItems(
-      rowA.columnFiltersMeta[columnId]?.itemRank!,
-      rowB.columnFiltersMeta[columnId]?.itemRank!
-    )
-  }
-
-  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir
-}
+import { fuzzyFilterTab, fuzzySortTab } from "./tab-table";
+import { Toggle } from "../ui/toggle";
 
 export function TabCheckoutTable({ shopId, data, selectedTab, setSelectedTab }: {
   data: TabOverview[],
@@ -98,22 +65,12 @@ export function TabCheckoutTable({ shopId, data, selectedTab, setSelectedTab }: 
         <div className="whitespace-nowrap">Selected tab: {selectedTab?.display_name ?? "-"}</div>
       </div>
       <div className="flex gap-2 items-center">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline' className="text-sm gap-1" size="sm">
-              <ListFilter className="w-3.5 h-3.5" />
-              <span> Filter </span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuCheckboxItem
-              checked={table.getColumn('active')?.getFilterValue() as boolean ?? true}
-              onCheckedChange={(val) => table.getColumn('active')?.setFilterValue(val)}
-            >
-              Active
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Toggle
+          pressed={table.getColumn('active')?.getFilterValue() as boolean ?? true}
+          onPressedChange={(val) => table.getColumn('active')?.setFilterValue(val)}
+        >
+          Active
+        </Toggle>
       </div>
     </div>
     <div className="bg-background text-foreground rounded-md max-w-full max-h-full border overflow-scroll">
