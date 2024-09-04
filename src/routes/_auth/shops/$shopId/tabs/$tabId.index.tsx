@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getShopTabForIdQueryOptions, useApproveTab, useCloseBill } from '@/api/tabs'
+import { getShopTabForIdQueryOptions, useApproveTab, useCloseBill, useCloseTab } from '@/api/tabs'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -16,6 +16,7 @@ import { EditButton } from '@/components/ui/edit-button';
 import { CheckButton } from '@/components/ui/check-button';
 import { TabStatus } from '@/types/types';
 import { useOnErrorToast, useOnSuccessToast } from '@/api/toasts';
+import { ArchiveButton } from '@/components/ui/archive-button';
 
 export const Route = createFileRoute('/_auth/shops/$shopId/tabs/$tabId/')({
   component: TabComponent
@@ -39,6 +40,14 @@ function TabComponent() {
   const handleApprove = (shopId: number, tabId: number) => {
     approveTab.mutate({ shopId, tabId }, {
       onSuccess: () => onSuccess("Successfully approved tab."),
+      onError,
+    })
+  }
+
+  const closeTab = useCloseTab()
+  const handleCloseTab = (shopId: number, tabId: number) => {
+    closeTab.mutate({ shopId, tabId }, {
+      onSuccess: () => onSuccess("Successfully closed tab."),
       onError,
     })
   }
@@ -80,8 +89,14 @@ function TabComponent() {
       </CardContent>
       <CardFooter>
         <TabFormSheet shop={shop} tab={tab}>
-          <EditButton>Edit Tab</EditButton>
+          <EditButton>Edit </EditButton>
         </TabFormSheet>
+        <ArchiveButton
+          disabled={closeTab.isPending || tab.status === TabStatus.closed}
+          onClick={() => handleCloseTab(shopId, tabId)}
+        >
+          Close
+        </ArchiveButton>
         <CheckButton
           disabled={
             approveTab.isPending
@@ -90,7 +105,7 @@ function TabComponent() {
           }
           onClick={() => handleApprove(shopId, tabId)}
         >
-          Approve Tab
+          Approve
         </CheckButton>
       </CardFooter>
     </Card>

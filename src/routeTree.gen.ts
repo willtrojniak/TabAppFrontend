@@ -19,6 +19,7 @@ import { Route as AuthProfileImport } from './routes/_auth/profile'
 import { Route as AuthShopsIndexImport } from './routes/_auth/shops/index'
 import { Route as AuthShopsShopIdImport } from './routes/_auth/shops/$shopId'
 import { Route as AuthShopsShopIdIndexImport } from './routes/_auth/shops/$shopId/index'
+import { Route as AuthShopsShopIdTabsImport } from './routes/_auth/shops/$shopId/tabs'
 import { Route as AuthShopsShopIdItemsImport } from './routes/_auth/shops/$shopId/items'
 import { Route as AuthShopsShopIdCheckoutImport } from './routes/_auth/shops/$shopId/checkout'
 import { Route as AuthShopsShopIdItemsIndexImport } from './routes/_auth/shops/$shopId/items/index'
@@ -71,6 +72,11 @@ const AuthShopsShopIdIndexRoute = AuthShopsShopIdIndexImport.update({
   getParentRoute: () => AuthShopsShopIdRoute,
 } as any)
 
+const AuthShopsShopIdTabsRoute = AuthShopsShopIdTabsImport.update({
+  path: '/tabs',
+  getParentRoute: () => AuthShopsShopIdRoute,
+} as any)
+
 const AuthShopsShopIdItemsRoute = AuthShopsShopIdItemsImport.update({
   path: '/items',
   getParentRoute: () => AuthShopsShopIdRoute,
@@ -87,8 +93,8 @@ const AuthShopsShopIdItemsIndexRoute = AuthShopsShopIdItemsIndexImport.update({
 } as any)
 
 const AuthShopsShopIdTabsTabIdRoute = AuthShopsShopIdTabsTabIdImport.update({
-  path: '/tabs/$tabId',
-  getParentRoute: () => AuthShopsShopIdRoute,
+  path: '/$tabId',
+  getParentRoute: () => AuthShopsShopIdTabsRoute,
 } as any)
 
 const AuthShopsShopIdItemsItemIdRoute = AuthShopsShopIdItemsItemIdImport.update(
@@ -189,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthShopsShopIdItemsImport
       parentRoute: typeof AuthShopsShopIdImport
     }
+    '/_auth/shops/$shopId/tabs': {
+      id: '/_auth/shops/$shopId/tabs'
+      path: '/tabs'
+      fullPath: '/shops/$shopId/tabs'
+      preLoaderRoute: typeof AuthShopsShopIdTabsImport
+      parentRoute: typeof AuthShopsShopIdImport
+    }
     '/_auth/shops/$shopId/': {
       id: '/_auth/shops/$shopId/'
       path: '/'
@@ -212,10 +225,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/shops/$shopId/tabs/$tabId': {
       id: '/_auth/shops/$shopId/tabs/$tabId'
-      path: '/tabs/$tabId'
+      path: '/$tabId'
       fullPath: '/shops/$shopId/tabs/$tabId'
       preLoaderRoute: typeof AuthShopsShopIdTabsTabIdImport
-      parentRoute: typeof AuthShopsShopIdImport
+      parentRoute: typeof AuthShopsShopIdTabsImport
     }
     '/_auth/shops/$shopId/items/': {
       id: '/_auth/shops/$shopId/items/'
@@ -269,11 +282,13 @@ export const routeTree = rootRoute.addChildren({
             }),
           AuthShopsShopIdItemsIndexRoute,
         }),
+        AuthShopsShopIdTabsRoute: AuthShopsShopIdTabsRoute.addChildren({
+          AuthShopsShopIdTabsTabIdRoute:
+            AuthShopsShopIdTabsTabIdRoute.addChildren({
+              AuthShopsShopIdTabsTabIdIndexRoute,
+            }),
+        }),
         AuthShopsShopIdIndexRoute,
-        AuthShopsShopIdTabsTabIdRoute:
-          AuthShopsShopIdTabsTabIdRoute.addChildren({
-            AuthShopsShopIdTabsTabIdIndexRoute,
-          }),
       }),
       AuthShopsIndexRoute,
     }),
@@ -325,8 +340,8 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/_auth/shops/$shopId/checkout",
         "/_auth/shops/$shopId/items",
-        "/_auth/shops/$shopId/",
-        "/_auth/shops/$shopId/tabs/$tabId"
+        "/_auth/shops/$shopId/tabs",
+        "/_auth/shops/$shopId/"
       ]
     },
     "/_auth/shops/": {
@@ -346,6 +361,13 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/_auth/shops/$shopId/items/$itemId",
         "/_auth/shops/$shopId/items/"
+      ]
+    },
+    "/_auth/shops/$shopId/tabs": {
+      "filePath": "_auth/shops/$shopId/tabs.tsx",
+      "parent": "/_auth/shops/$shopId",
+      "children": [
+        "/_auth/shops/$shopId/tabs/$tabId"
       ]
     },
     "/_auth/shops/$shopId/": {
@@ -368,7 +390,7 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_auth/shops/$shopId/tabs/$tabId": {
       "filePath": "_auth/shops/$shopId/tabs/$tabId.tsx",
-      "parent": "/_auth/shops/$shopId",
+      "parent": "/_auth/shops/$shopId/tabs",
       "children": [
         "/_auth/shops/$shopId/tabs/$tabId/"
       ]

@@ -59,6 +59,23 @@ export function useApproveTab() {
   })
 }
 
+async function closeTab({ shopId, tabId }: {
+  shopId: number,
+  tabId: number,
+}) {
+  const url = `${API_BASE_URL}/api/${API_VERSION}/shops/${shopId}/tabs/${tabId}/close`
+  return axios.post(url)
+}
+
+export function useCloseTab() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: closeTab,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: getShopTabsQueryOptions(variables.shopId).queryKey })
+    }
+  })
+}
 
 async function addOrderToTab({ shopId, tabId, data }: {
   shopId: number,
