@@ -101,7 +101,6 @@ export function TabTable({ shopId, tabs }: {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Status</DropdownMenuLabel>
-            <DropdownMenuSeparator />
             <DropdownMenuCheckboxItem
               checked={(table.getColumn('status')?.getFilterValue() as string[])?.includes(TabStatus.pending) ?? false}
               onCheckedChange={(val) => table.getColumn('status')?.setFilterValue((prev?: string[]) => { return val ? prev ? [...prev, TabStatus.pending] : [TabStatus.pending] : prev?.filter(v => v !== TabStatus.pending) })}
@@ -114,8 +113,8 @@ export function TabTable({ shopId, tabs }: {
               checked={(table.getColumn('status')?.getFilterValue() as string[])?.includes(TabStatus.closed) ?? false}
               onCheckedChange={(val) => table.getColumn('status')?.setFilterValue((prev?: string[]) => { return val ? prev ? [...prev, TabStatus.closed] : [TabStatus.closed] : prev?.filter(v => v !== TabStatus.closed) })}
             >Closed</DropdownMenuCheckboxItem>
-            <DropdownMenuLabel>Balance</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuLabel>Balance</DropdownMenuLabel>
             <DropdownMenuCheckboxItem
               checked={(table.getColumn('is_pending_balance')?.getFilterValue() as boolean[])?.includes(true) ?? false}
               onCheckedChange={(val) => table.getColumn('is_pending_balance')?.setFilterValue((prev?: boolean[]) => { return val ? prev ? [...prev, true] : [true] : prev?.filter(v => v !== true) })}
@@ -124,6 +123,7 @@ export function TabTable({ shopId, tabs }: {
               checked={(table.getColumn('is_pending_balance')?.getFilterValue() as boolean[])?.includes(false) ?? false}
               onCheckedChange={(val) => table.getColumn('is_pending_balance')?.setFilterValue((prev?: boolean[]) => { return val ? prev ? [...prev, false] : [false] : prev?.filter(v => v !== false) })}
             >Paid</DropdownMenuCheckboxItem>
+            <DropdownMenuSeparator />
             <DropdownMenuLabel>Payment Method</DropdownMenuLabel>
             <DropdownMenuCheckboxItem
               checked={(table.getColumn('payment_method')?.getFilterValue() as string[])?.includes(PaymentMethod.in_person) ?? false}
@@ -133,7 +133,6 @@ export function TabTable({ shopId, tabs }: {
               checked={(table.getColumn('payment_method')?.getFilterValue() as string[])?.includes(PaymentMethod.chartstring) ?? false}
               onCheckedChange={(val) => table.getColumn('payment_method')?.setFilterValue((prev?: string[]) => { return val ? prev ? [...prev, PaymentMethod.chartstring] : [PaymentMethod.chartstring] : prev?.filter(v => v !== PaymentMethod.chartstring) })}
             >Chartstring</DropdownMenuCheckboxItem>
-            <DropdownMenuSeparator />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

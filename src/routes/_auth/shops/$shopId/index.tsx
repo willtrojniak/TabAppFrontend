@@ -3,14 +3,12 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { DataTable } from '@/components/data-table'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useItemColumns } from '@/components/item-table-columns'
-import { ItemFormDialog } from '@/components/forms/item-form'
 import { ShopFormCard } from '@/components/forms/shop-form'
 import { PaymentMethod } from '@/types/types'
 import { useSubstitutionGroupColumns } from '@/components/substitution-groups-table-columns'
 import { SubstitutionGroupFormDialog } from '@/components/forms/substitution-group-form'
 import { CreateButton } from '@/components/ui/create-button'
 import { getShopForIdQueryOptions } from '@/api/shops'
-import { useGetShopCategories } from '@/api/categories'
 import { getShopSubstitutionsQueryOptions } from '@/api/substitutions'
 import { getShopItemsQueryOptions } from '@/api/items'
 import { getShopTabsQueryOptions } from '@/api/tabs'
@@ -26,7 +24,6 @@ export const Route = createFileRoute('/_auth/shops/$shopId/')({
 function ShopComponent() {
   const { shopId } = Route.useParams();
   const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
-  const categories = useGetShopCategories(shopId);
   const { data: substitutions } = useSuspenseQuery(getShopSubstitutionsQueryOptions(shopId))
   const { data: items } = useSuspenseQuery(getShopItemsQueryOptions(shopId))
   const { data: tabs } = useSuspenseQuery(getShopTabsQueryOptions(shopId))
@@ -53,11 +50,6 @@ function ShopComponent() {
             <DataTable columns={itemCols} data={items} />
           </div>
         </CardContent>
-        <CardFooter>
-          <ItemFormDialog shopId={shopId} categories={categories} addons={items} substitutions={substitutions}>
-            <CreateButton>Create Item</CreateButton>
-          </ItemFormDialog>
-        </CardFooter>
       </Card>
       <Card className='row-span-3'>
         <CardHeader>
@@ -73,7 +65,7 @@ function ShopComponent() {
         </CardFooter>
       </Card>
     </div>
-    <Card className='w-full max-w-full overflow-x-auto'>
+    <Card className='max-w-full overflow-x-auto'>
       <CardHeader>
         <CardTitle>Tabs</CardTitle>
       </CardHeader>
