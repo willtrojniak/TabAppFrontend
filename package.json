@@ -29,6 +29,7 @@
     "@radix-ui/react-toast": "^1.2.1",
     "@radix-ui/react-toggle": "^1.1.0",
     "@radix-ui/react-toggle-group": "^1.1.0",
+    "@react-pdf/renderer": "^3.4.4",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-form": "^0.28.0",

@@ -4,7 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { ChevronsUpDown, CornerDownRight } from 'lucide-react';
+import { ChevronsUpDown, CornerDownRight, Download } from 'lucide-react';
 import { Format24hTime, FormatDateMMDDYYYY, GetActiveDayAcronyms } from '@/util/dates';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrencyUSD } from '@/util/currency';
@@ -17,6 +17,8 @@ import { CheckButton } from '@/components/ui/check-button';
 import { TabStatus } from '@/types/types';
 import { useOnErrorToast, useOnSuccessToast } from '@/api/toasts';
 import { ArchiveButton } from '@/components/ui/archive-button';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { BillPdf } from '@/components/pdfs/bill-pdf';
 
 export const Route = createFileRoute('/_auth/shops/$shopId/tabs/$tabId/')({
   component: TabComponent
@@ -163,7 +165,14 @@ function TabComponent() {
                   </TableFooter>
                 </Table>
               </div>
-              <Button onClick={() => handleClose(shopId, tabId, bill.id)} disabled={bill.is_paid}>Mark Paid</Button>
+              <div className='flex gap-2 flex-wrap'>
+                <Button onClick={() => handleClose(shopId, tabId, bill.id)} disabled={bill.is_paid}>Mark Paid</Button>
+                <PDFDownloadLink document={<BillPdf shop={shop} tab={tab} bill={bill} />} fileName={`${tab.display_name}_${FormatDateMMDDYYYY(bill.start_date)}_${FormatDateMMDDYYYY(bill.end_date)}`}>
+                  {({ loading, error }) => {
+                    return <Button disabled={!!loading || !!error} className='gap-2' variant="outline"><Download className='w-4 h-4' />{error ? "Error generating file" : loading ? "Loading ..." : "Download"}</Button>
+                  }}
+                </PDFDownloadLink>
+              </div>
             </CollapsibleContent>
           </Collapsible>
         })}
