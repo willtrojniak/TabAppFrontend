@@ -117,11 +117,12 @@ function TabComponent() {
         {tab.bills.length === 0 && <div>No data to display</div>}
         {tab.bills.map((bill) => {
           let total = 0
-          return <Collapsible key={bill.id} className='max-w-full'>
-            <CollapsibleTrigger asChild className='mb-2'>
-              <Button variant='ghost' className='gap-1'>
+          return <Collapsible key={bill.id} className='w-full max-w-full'>
+            <CollapsibleTrigger asChild>
+              <Button variant='ghost' className='gap-4 mb-2 justify-start'>
                 <Badge variant={bill.is_paid ? "secondary" : "destructive"}>{bill.is_paid ? "Paid" : "Unpaid"}</Badge>
-                {FormatDateMMDDYYYY(bill.start_date)} - {FormatDateMMDDYYYY(bill.end_date)}<ChevronsUpDown className='w-4 h-4' /></Button>
+                <div className='flex items-center gap-2'>{FormatDateMMDDYYYY(bill.start_date)} - {FormatDateMMDDYYYY(bill.end_date)}<ChevronsUpDown className='w-4 h-4' /></div>
+              </Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className='border rounded-md mb-4 '>
