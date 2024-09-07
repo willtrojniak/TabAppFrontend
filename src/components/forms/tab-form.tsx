@@ -100,7 +100,7 @@ export function TabFormCard({ shop, tab }: {
   const { form, onSubmit, title, desc } = useTabForm({ shopId: shop.id, tab })
 
   return <CardForm form={form} title={title} desc={desc} onSubmit={onSubmit} >
-    <TabFormBody control={form.control} shop={shop} />
+    <TabFormBody control={form.control} shop={shop} tab={tab} />
   </CardForm>
 
 }
@@ -113,7 +113,7 @@ export function TabFormSheet({ children, shop, tab }: {
   const { form, onSubmit, title, desc } = useTabForm({ shopId: shop.id, tab })
 
   return <SheetForm form={form} title={title} desc={desc} trigger={children} onSubmit={onSubmit} >
-    <TabFormBody control={form.control} shop={shop} />
+    <TabFormBody control={form.control} shop={shop} tab={tab} />
   </SheetForm>
 }
 
@@ -125,6 +125,7 @@ function TabFormBody({ control, shop, tab }: {
 
   const verificationOptions = [VerificationMethod.specify, VerificationMethod.email, VerificationMethod.voucher]
   const paymentMethod = useWatch({ control, name: "payment.payment_method" })
+  const verificationMethod = useWatch({ control, name: "verification_method" })
 
   return <>
     <FormField
@@ -254,7 +255,7 @@ function TabFormBody({ control, shop, tab }: {
             <FormDescription>Choose which shop locations will host the tab. Cannot be changed.</FormDescription>
           </div>
           <div className="col-span-2 flex flex-col gap-1">
-            <FormControl >
+            <FormControl>
               <ReactSelect
                 {...field}
                 isMulti
@@ -388,15 +389,17 @@ function TabFormBody({ control, shop, tab }: {
       rules={{}}
       render={({ field }) => (
         <FormItem className="grid md:grid-cols-3 gap-2 items-start">
-          <div className="col">
-            <FormLabel>Verified List</FormLabel>
-            <FormDescription >List emails of verified users. One email per line.</FormDescription>
-          </div>
-          <div className="col-span-2 flex flex-col gap-1">
-            <FormControl >
-              <Textarea {...field} placeholder="john.doe@example.com&#10;jane.doe@example.com" />
-            </FormControl>
-          </div>
+          {verificationMethod === VerificationMethod.email && <>
+            <div className="col">
+              <FormLabel>Verified List</FormLabel>
+              <FormDescription >List emails of verified users. One email per line.</FormDescription>
+            </div>
+            <div className="col-span-2 flex flex-col gap-1">
+              <FormControl >
+                <Textarea {...field} placeholder="john.doe@example.com&#10;jane.doe@example.com" />
+              </FormControl>
+            </div>
+          </>}
         </FormItem>
       )} />
   </>

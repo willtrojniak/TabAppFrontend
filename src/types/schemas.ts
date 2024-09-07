@@ -151,7 +151,7 @@ const chartstring = z.string().regex(/^([A-z0-9]{5})[ |-]?([A-z0-9]{5})(?:(?:-|\
 
 export const tabCreateSchema = z.object({
   display_name: z.string({ description: "Tab Name" }).min(2, "Tab name must be at least two characters").max(64),
-  organization: z.string().min(2, "Organization must be at least two characters").max(64),
+  organization: z.string().min(3, "Organization must be at least two characters").max(64),
   payment: z.object({
     payment_method: z.nativeEnum(PaymentMethod, { message: "Invalid value" }),
     payment_details: z.union([z.string().length(0, { message: "Invalid charstring. Must be of format XXXXX-XXXXX(-XXXXX)" }), chartstring.optional()]),
