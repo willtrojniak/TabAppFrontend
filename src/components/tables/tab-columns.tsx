@@ -59,6 +59,15 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
       header: "Organization",
     },
     {
+      accessorKey: "locations",
+      header: () => <div>Locations</div>,
+      cell: ({ row }) => {
+        const tab = row.original
+        return <div className="whitespace-nowrap">{tab.locations.map(v => v.name).join(", ")}</div>
+
+      }
+    },
+    {
       accessorKey: "active_days_of_wk",
       header: "Active Days of the Week",
       cell: ({ row }) => {

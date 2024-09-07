@@ -1,20 +1,22 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
 import { useTabCheckoutColumns } from "./tab-checkout-columns";
-import { TabOverview } from "@/types/types";
+import { Shop, TabOverview } from "@/types/types";
 import React from "react";
 import { Input } from "../ui/input";
 import { fuzzyFilterTab, fuzzySortTab } from "./tab-table";
 import { Toggle } from "../ui/toggle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { parseInt } from "lodash";
 
-export function TabCheckoutTable({ shopId, data, selectedTab, setSelectedTab }: {
+export function TabCheckoutTable({ shop, data, selectedTab, setSelectedTab }: {
   data: TabOverview[],
-  shopId: number,
+  shop: Shop,
   selectedTab?: TabOverview,
   setSelectedTab: (tab: TabOverview) => void,
 }) {
 
-  const columns = useTabCheckoutColumns(shopId)
+  const columns = useTabCheckoutColumns(shop.id)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([
     {
       id: 'active',
@@ -62,6 +64,14 @@ export function TabCheckoutTable({ shopId, data, selectedTab, setSelectedTab }: 
         <div className="whitespace-nowrap">Selected tab: {selectedTab?.display_name ?? "-"}</div>
       </div>
       <div className="flex gap-2 items-center">
+        <Select onValueChange={(v) => table.getColumn('location')?.setFilterValue(parseInt(v))} value={table.getColumn('location')?.getFilterValue()?.toString() ?? ""}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select shop location..." />
+          </SelectTrigger>
+          <SelectContent>
+            {shop.locations.map(o => (<SelectItem key={o.id} value={o.id.toString()}>{o.name}</SelectItem>))}
+          </SelectContent>
+        </Select>
         <Toggle
           pressed={table.getColumn('active')?.getFilterValue() as boolean ?? true}
           onPressedChange={(val) => table.getColumn('active')?.setFilterValue(val)}
@@ -114,6 +124,6 @@ export function TabCheckoutTable({ shopId, data, selectedTab, setSelectedTab }: 
 
       </Table>
     </div >
-  </div>
+  </div >
 
 }

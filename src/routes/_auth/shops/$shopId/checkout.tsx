@@ -1,4 +1,5 @@
 import { useGetShopCategories } from '@/api/categories';
+import { getShopForIdQueryOptions } from '@/api/shops';
 import { getShopTabsQueryOptions } from '@/api/tabs';
 import { CategoryTabSelect } from '@/components/category-items';
 import { TabCheckoutTable } from '@/components/tables/tab-checkout-table';
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/_auth/shops/$shopId/checkout')({
 function CheckoutComponent() {
   const { shopId } = Route.useParams();
   const categories = useGetShopCategories(shopId);
+  const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
   const { data: tabs } = useSuspenseQuery(getShopTabsQueryOptions(shopId))
 
   const [selectedCategory, setSelectedCategory] = React.useState<Category | undefined>(categories[0])
@@ -52,7 +54,7 @@ function CheckoutComponent() {
     <ResizablePanel defaultSize={67} className='py-2' >
       <Suspense fallback={"Loading"}>
         <div className='flex flex-col items-start px-6'>
-          <TabCheckoutTable shopId={shopId} data={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+          <TabCheckoutTable shop={shop} data={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
           <Outlet />
         </div>
       </Suspense>

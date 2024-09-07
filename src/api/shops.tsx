@@ -1,7 +1,7 @@
 import axios from "axios";
 import { QueryClient, QueryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL, API_VERSION } from "../util/constants";
-import { Shop } from "../types/types";
+import { Shop, ShopOverview } from "../types/types";
 import { ShopCreate } from "@/types/schemas";
 
 function createShop({ data }: { data: ShopCreate }) {
@@ -36,7 +36,7 @@ export function useUpdateShop() {
 
 async function getShops() {
   const url = `${API_BASE_URL}/api/${API_VERSION}/shops`
-  const response = await axios.get<Shop[]>(url)
+  const response = await axios.get<ShopOverview[]>(url)
   return response.data;
 }
 
@@ -55,7 +55,7 @@ export function invalidateGetShops(queryClient: QueryClient) {
 
 async function getShopsForUserId(userId: string) {
   const url = encodeURI(`${API_BASE_URL}/api/${API_VERSION}/shops?userId=${userId}`)
-  const response = await axios.get<Shop[]>(url)
+  const response = await axios.get<ShopOverview[]>(url)
   return response.data;
 }
 

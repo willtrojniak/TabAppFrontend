@@ -1,10 +1,10 @@
-import { Shop, TabOverview } from "@/types/types"
+import { ShopOverview, TabOverview } from "@/types/types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { TabTable } from "./tables/tab-table"
 
 type PropsType = Omit<React.ComponentPropsWithoutRef<typeof Card>, "children"> & {
   tabs: TabOverview[],
-  shop: Shop
+  shop: ShopOverview
 }
 
 export function TabsTableCard({ shop, tabs, ...props }: PropsType) {

@@ -1,7 +1,7 @@
 import { useOnErrorToast, useOnSuccessToast } from "@/api/toasts";
 import { useCreateTab, useUpdateTab } from "@/api/tabs";
 import { TabCreate, TabCreateInput, tabCreateSchema } from "@/types/schemas";
-import { PaymentMethod, Shop, Tab, VerificationMethod } from "@/types/types";
+import { LocationOverview, PaymentMethod, Shop, Tab, VerificationMethod } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Control, useForm, useWatch } from "react-hook-form";
@@ -14,6 +14,7 @@ import { Textarea } from "../ui/textarea";
 import { SheetForm } from "./sheet-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { CardForm } from "./card-form";
+import { ReactSelect } from "../ui/react-select";
 
 function getTabDefaults(tab?: Tab) {
   return {
@@ -23,6 +24,7 @@ function getTabDefaults(tab?: Tab) {
       payment_details: tab?.payment_details ?? "",
     },
     organization: tab?.organization ?? "",
+    location_ids: tab?.locations ?? [],
     dates: {
       from: tab?.start_date ?? "",
       to: tab?.end_date ?? ""
@@ -115,8 +117,9 @@ export function TabFormSheet({ children, shop, tab }: {
   </SheetForm>
 }
 
-function TabFormBody({ control, shop }: {
+function TabFormBody({ control, shop, tab }: {
   control: Control<TabCreateInput>,
+  tab?: Tab,
   shop: Shop
 }) {
 
@@ -237,6 +240,31 @@ function TabFormBody({ control, shop }: {
               </SelectContent>
             </Select>
             <FormMessage className="col-span-2 col-start-2" />
+          </div>
+        </FormItem>
+      )} />
+    <FormField
+      control={control}
+      name="location_ids"
+      rules={{}}
+      render={({ field }) => (
+        <FormItem className="grid md:grid-cols-3 gap-2 items-start">
+          <div className="col">
+            <FormLabel>Locations</FormLabel>
+            <FormDescription>Choose which shop locations will host the tab. Cannot be changed.</FormDescription>
+          </div>
+          <div className="col-span-2 flex flex-col gap-1">
+            <FormControl >
+              <ReactSelect
+                {...field}
+                isMulti
+                isDisabled={!!tab?.id}
+                options={shop.locations}
+                getOptionValue={(o) => { const location = o as LocationOverview; return location.id.toString() }}
+                getOptionLabel={(o) => { const location = o as LocationOverview; return location.name }}
+              />
+            </FormControl>
+            <FormMessage />
           </div>
         </FormItem>
       )} />

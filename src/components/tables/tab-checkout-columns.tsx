@@ -108,6 +108,13 @@ export function useTabCheckoutColumns(shopId: number): ColumnDef<TabOverview>[] 
         return !filterValue || isTabActiveNow(tab)
 
       }
+    },
+    {
+      id: "location",
+      filterFn: (row, _, filterValue: number) => {
+        const tab = row.original
+        return !filterValue || !!tab.locations.find(v => v.id === filterValue)
+      }
     }
   ] satisfies ColumnDef<TabOverview>[], [shopId])
 }

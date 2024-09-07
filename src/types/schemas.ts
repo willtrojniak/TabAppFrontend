@@ -57,6 +57,12 @@ export const shopCreateSchema = z.object({
 export type ShopCreateInput = z.input<typeof shopCreateSchema>
 export type ShopCreate = z.infer<typeof shopCreateSchema>
 
+export const locationCreateSchema = z.object({
+  name: z.string().min(1).max(64),
+})
+
+export type LocationCreateInput = z.input<typeof locationCreateSchema>
+export type LocationCreate = z.infer<typeof locationCreateSchema>
 
 export const categoryCreateSchema = z.object({
   name: z.string().min(1).max(64),
@@ -164,6 +170,9 @@ export const tabCreateSchema = z.object({
     }
   }),
   billing_interval_days: z.number().min(1, { message: "Billing interval must be at least one day" }).max(365),
+  location_ids: z.array(z.object({
+    id: z.number().min(1)
+  }).transform(({ id }) => id)).min(1),
   dates: z.object({
     from: z.string({ message: "Required" }).date("Invalid date"),
     to: z.string({ message: "Required" }).date("Invalid date")

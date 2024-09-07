@@ -26,11 +26,20 @@ export enum VerificationMethod {
   email = "email"
 }
 
-export type Shop = {
+export type ShopOverview = {
   id: number
   owner_id: string
   name: string
   payment_methods: PaymentMethod[]
+}
+
+export type LocationOverview = {
+  id: number,
+  name: string,
+}
+
+export type Shop = ShopOverview & {
+  locations: LocationOverview[]
 }
 
 export type CategoryOverview = z.output<typeof categoryOverviewSchema>
@@ -87,7 +96,7 @@ export const DayOptions = () => [
   { value: DayBits.Saturday, label: "Sat" },
 ]
 
-type TabBase = z.output<typeof tabCreateSchema>
+type TabBase = Omit<z.output<typeof tabCreateSchema>, "location_ids">
 
 export type TabOverview = TabBase & {
   verification_list: string[],
@@ -97,6 +106,7 @@ export type TabOverview = TabBase & {
   owner_id: number,
   id: number,
   status: TabStatus,
+  locations: LocationOverview[]
 }
 
 export type Tab = TabOverview & {
