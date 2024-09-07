@@ -96,7 +96,9 @@ export const DayOptions = () => [
   { value: DayBits.Saturday, label: "Sat" },
 ]
 
-type TabBase = Omit<z.output<typeof tabCreateSchema>, "location_ids">
+type TabBase = Omit<z.output<typeof tabCreateSchema>, "location_ids"> & {
+  locations: LocationOverview[]
+}
 
 export type TabOverview = TabBase & {
   verification_list: string[],

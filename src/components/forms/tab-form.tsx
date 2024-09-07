@@ -100,7 +100,7 @@ export function TabFormCard({ shop, tab }: {
   const { form, onSubmit, title, desc } = useTabForm({ shopId: shop.id, tab })
 
   return <CardForm form={form} title={title} desc={desc} onSubmit={onSubmit} >
-    <TabFormBody control={form.control} shop={shop} tab={tab} />
+    <TabFormBody control={form.control} shop={shop} />
   </CardForm>
 
 }
@@ -113,13 +113,12 @@ export function TabFormSheet({ children, shop, tab }: {
   const { form, onSubmit, title, desc } = useTabForm({ shopId: shop.id, tab })
 
   return <SheetForm form={form} title={title} desc={desc} trigger={children} onSubmit={onSubmit} >
-    <TabFormBody control={form.control} shop={shop} tab={tab} />
+    <TabFormBody control={form.control} shop={shop} />
   </SheetForm>
 }
 
-function TabFormBody({ control, shop, tab }: {
+function TabFormBody({ control, shop }: {
   control: Control<TabCreateInput>,
-  tab?: Tab,
   shop: Shop
 }) {
 
@@ -252,14 +251,13 @@ function TabFormBody({ control, shop, tab }: {
         <FormItem className="grid md:grid-cols-3 gap-2 items-start">
           <div className="col">
             <FormLabel>Locations</FormLabel>
-            <FormDescription>Choose which shop locations will host the tab. Cannot be changed.</FormDescription>
+            <FormDescription>Choose which shop locations will host the tab.</FormDescription>
           </div>
           <div className="col-span-2 flex flex-col gap-1">
             <FormControl>
               <ReactSelect
                 {...field}
                 isMulti
-                isDisabled={!!tab?.id}
                 options={shop.locations}
                 getOptionValue={(o) => { const location = o as LocationOverview; return location.id.toString() }}
                 getOptionLabel={(o) => { const location = o as LocationOverview; return location.name }}

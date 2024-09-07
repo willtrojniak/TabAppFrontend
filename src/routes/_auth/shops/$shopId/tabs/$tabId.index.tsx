@@ -71,8 +71,11 @@ function TabComponent() {
         <span>{tab.payment_details}</span>
         <span>{tab.pending_updates?.payment_details}</span>
         <span>Billing Interval:</span>
-        <span>{tab.billing_interval_days} days</span>
-        <span>{tab.pending_updates?.billing_interval_days}</span>
+        <span>{tab.billing_interval_days} day(s)</span>
+        <span>{tab.pending_updates?.billing_interval_days} {tab.pending_updates && "day(s)"}</span>
+        <span>Location(s):</span>
+        <span>{tab.locations.map(loc => loc.name).join(',')}</span>
+        <span>{tab.pending_updates?.locations.map(loc => loc.name).join(',')}</span>
         <span>Active Date(s):</span>
         <span>{tab.start_date !== tab.end_date ? `${FormatDateMMDDYYYY(tab.start_date)} - ${FormatDateMMDDYYYY(tab.end_date)}` : FormatDateMMDDYYYY(tab.start_date)}</span>
         <span>{tab.pending_updates?.start_date !== tab.pending_updates?.end_date && tab.pending_updates ? `${FormatDateMMDDYYYY(tab.pending_updates?.start_date)} - ${FormatDateMMDDYYYY(tab.pending_updates.end_date)}` : tab.pending_updates ? FormatDateMMDDYYYY(tab.pending_updates.start_date) : ""}</span>
