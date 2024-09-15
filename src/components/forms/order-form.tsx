@@ -135,7 +135,7 @@ function OrderFormBody({ item, control }: {
   const { fields: addonFields } = useFieldArray({ control, name: "addons", keyName: "key" })
 
   return <>
-    <FormLabel>Variants</FormLabel>
+    {item.variants.length > 0 && <FormLabel>Variants</FormLabel>}
     {item.variants.length > 0 && <FormField
       control={control}
       name="item.variantId"
