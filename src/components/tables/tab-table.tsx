@@ -9,6 +9,7 @@ import { ListFilter } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Input } from "../ui/input";
 import { ColumnFilter } from "./table";
+import { useNavigate } from "@tanstack/react-router";
 
 declare module '@tanstack/react-table' {
   interface FilterFns {
@@ -58,6 +59,7 @@ export function TabTable({ shopId, tabs }: {
     value: []
   }])
   const [globalFilter, setGlobalFilter] = React.useState("")
+  const navigate = useNavigate();
 
   const table = useReactTable<TabOverview>({
     data: tabs,
@@ -155,11 +157,11 @@ export function TabTable({ shopId, tabs }: {
         </DropdownMenu>
       </div>
     </div>
-    <div className="bg-background text-foreground rounded-md max-w-full max-h-full border overflow-scroll">
+    <div className="bg-background text-foreground rounded-md max-w-full max-h-96 border overflow-scroll">
       <Table className="max-h-full overflow-y-auto">
         <TableHeader className="whitespace-nowrap">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} >
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder ? null
@@ -181,7 +183,10 @@ export function TabTable({ shopId, tabs }: {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} >
+              <TableRow key={row.id}
+                onClick={() => navigate({ to: "/shops/$shopId/tabs/$tabId", hash: 'tab', params: { shopId: row.original.shop_id, tabId: row.original.id } })}
+                className="cursor-pointer"
+              >
                 {
                   row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

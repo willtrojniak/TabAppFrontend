@@ -80,7 +80,7 @@ export function TabCheckoutTable({ shop, data, selectedTab, setSelectedTab }: {
         </Toggle>
       </div>
     </div>
-    <div className="bg-background text-foreground rounded-md max-w-full max-h-full border overflow-scroll">
+    <div className="bg-background text-foreground rounded-md max-w-full max-h-96 border overflow-scroll">
       <Table className="max-h-full overflow-y-auto">
         <TableHeader className="whitespace-nowrap">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -103,7 +103,8 @@ export function TabCheckoutTable({ shop, data, selectedTab, setSelectedTab }: {
                 onClick={() => {
                   row.toggleSelected(true)
                   setSelectedTab(row.original)
-                }}>
+                }}
+                className="cursor-pointer data-[state=selected]:bg-yellow-100 data-[state=selected]:text-black">
                 {
                   row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -121,7 +122,6 @@ export function TabCheckoutTable({ shop, data, selectedTab, setSelectedTab }: {
             </TableRow>
           )}
         </TableBody>
-
       </Table>
     </div >
   </div >

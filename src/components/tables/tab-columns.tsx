@@ -1,10 +1,8 @@
 import { TabOverview, TabStatus } from "@/types/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { Format24hTime, GetActiveDayAcronyms, FormatDateMMDDYYYY } from "@/util/dates"
-import { Button } from "@/components/ui/button"
-import { Link } from "@tanstack/react-router"
 import React from "react"
-import { BadgeAlert, Check, ExternalLink } from "lucide-react"
+import { BadgeAlert, Check } from "lucide-react"
 import { Badge } from "../ui/badge"
 import { filterInArray } from "./table"
 
@@ -18,7 +16,7 @@ export function useTabColumns(shopId: number): ColumnDef<TabOverview>[] {
       header: "Tab",
       cell: ({ row }) => {
         const tab = row.original
-        return <Button asChild variant="link"><Link to="/shops/$shopId/tabs/$tabId" params={{ shopId, tabId: tab.id }}>{tab.display_name}<ExternalLink className="ml-2 w-4 h-4" /></Link></Button>
+        return <div className="whitespace-nowrap">{tab.display_name}</div>
       },
       sortingFn: 'fuzzy',
     },

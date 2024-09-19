@@ -2,12 +2,12 @@ import { TabOverview } from "@/types/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { Format24hTime, GetActiveDayAcronyms, FormatDateMMDDYYYY } from "@/util/dates"
 import { Button } from "@/components/ui/button"
-import { Link } from "@tanstack/react-router"
 import React from "react"
 import { ExternalLink, Eye } from "lucide-react"
 import { formatCurrencyUSD } from "@/util/currency"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { isTabActiveNow } from "@/util/tabs"
+import { Link } from "@tanstack/react-router"
 
 export function useTabCheckoutColumns(shopId: number): ColumnDef<TabOverview>[] {
   return React.useMemo(() => [
@@ -19,9 +19,17 @@ export function useTabCheckoutColumns(shopId: number): ColumnDef<TabOverview>[] 
       header: "Tab",
       cell: ({ row }) => {
         const tab = row.original
-        return <Button asChild variant="link"><Link to="/shops/$shopId/tabs/$tabId" params={{ shopId, tabId: tab.id }}>{tab.display_name}<ExternalLink className="ml-2 w-4 h-4" /></Link></Button>
+        return <div className="whitespace-nowrap">{tab.display_name}</div>
       },
       sortingFn: 'fuzzy',
+    },
+    {
+      id: "link",
+      cell: ({ row }) => {
+        const tab = row.original
+        return <Link to="/shops/$shopId/tabs/$tabId" hash="tab" params={{ shopId: tab.shop_id, tabId: tab.id }}><Button variant="link"><ExternalLink className="w-4 h-4" /></Button></Link>
+      }
+
     },
     {
       accessorKey: "organization",

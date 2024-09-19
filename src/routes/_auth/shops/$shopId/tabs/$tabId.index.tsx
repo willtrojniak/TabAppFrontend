@@ -55,7 +55,7 @@ function TabComponent() {
   }
 
   return <div className='flex flex-row flex-wrap gap-4 items-start'>
-    <Card>
+    <Card id='tab'>
       <CardHeader><CardTitle>{tab.display_name}</CardTitle></CardHeader>
       <CardContent className='grid grid-cols-3 gap-4'>
         <span>Status:</span>
