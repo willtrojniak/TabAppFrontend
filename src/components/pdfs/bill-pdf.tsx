@@ -42,7 +42,7 @@ export function BillPdf({ shop, tab, bill }: { shop: Shop, tab: TabOverview, bil
   let totalBalance = 0;
 
   const items = bill.items.map((order) => {
-    if (order.base_price === 0 || order.quantity === 0) return null;
+    if ((order.base_price === 0 && order.variants.length === 0) || order.quantity === 0) return null;
     totalBalance += order.base_price * order.quantity
     return <React.Fragment key={order.id}><View style={styleSheet.tableRow} key={order.id}>
       <Text>{order.name}</Text>

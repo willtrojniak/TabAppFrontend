@@ -3,13 +3,14 @@ import { Item } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { CounterInput } from "../ui/number-input";
 import React from "react";
 import { useAddOrderToTab, useRemoveOrderFromTab } from "@/api/tabs";
 import { toast } from "../ui/use-toast";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "../ui/dialog";
 import { Button } from "../ui/button";
+import { RadioGroupItem } from "@radix-ui/react-radio-group";
 
 function getItemDefaults(item: Item): OrderCreateRaw {
   const data = {
@@ -112,7 +113,7 @@ export function OrderFormDialog({ shopId, tabId, item, open, onOpenChange }: {
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={submitHandler}>
-          <div className="flex flex-col items-start gap-6 mb-6">
+          <div className="flex flex-col items-start gap-2 mb-6">
             <OrderFormBody item={item} control={form.control} />
           </div>
           <DialogFooter>
@@ -134,6 +135,7 @@ function OrderFormBody({ item, control }: {
   const { fields: addonFields } = useFieldArray({ control, name: "addons", keyName: "key" })
 
   return <>
+    {item.variants.length > 0 && <FormLabel>Variants</FormLabel>}
     {item.variants.length > 0 && <FormField
       control={control}
       name="item.variantId"
@@ -145,13 +147,16 @@ function OrderFormBody({ item, control }: {
               onValueChange={(e) => field.onChange(parseInt(e))}
               defaultValue={field.value?.toString()}
               value={field.value?.toString()}
+              className="flex flex-row flex-wrap"
             >
               {item.variants.map(v => (
-                <FormItem key={v.id} className="flex items-center space-x-3 space-y-0">
+                <FormItem key={v.id}>
                   <FormControl>
-                    <RadioGroupItem value={v.id.toString()}></RadioGroupItem>
+                    <RadioGroupItem value={v.id.toString()} className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground py-1 px-3 rounded text-sm border-solid border-muted-foreground border">
+                      {v.name}
+                    </RadioGroupItem>
                   </FormControl>
-                  <FormLabel>{v.name} - ${v.price.toFixed(2)}</FormLabel>
+                  <FormLabel></FormLabel>
                 </FormItem>
               ))}
             </RadioGroup>
@@ -176,13 +181,15 @@ function OrderFormBody({ item, control }: {
                 onValueChange={(e) => field.onChange(parseInt(e))}
                 defaultValue={field.value.toString()}
                 value={field.value.toString()}
+                className="flex flex-row flex-wrap"
               >
                 {substitution_group?.substitutions.map(v => (
-                  <FormItem key={v.id} className="flex items-center space-x-3 space-y-0">
+                  <FormItem key={v.id}>
                     <FormControl>
-                      <RadioGroupItem value={v.id.toString()}><div className="peer-checked:font-bold">{item.name}</div></RadioGroupItem>
+                      <RadioGroupItem value={v.id.toString()} className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground py-1 px-3 rounded text-sm border-solid border-muted-foreground border">
+                        {v.name}
+                      </RadioGroupItem>
                     </FormControl>
-                    <FormLabel className="peer-checked:bg-white">{v.name} - ${v.base_price.toFixed(2)}</FormLabel>
                     <FormMessage />
                   </FormItem>
                 ))}
@@ -205,7 +212,7 @@ function OrderFormBody({ item, control }: {
           return <FormItem>
             <FormLabel>{addon?.name}</FormLabel>
             <FormControl >
-              <CounterInput {...field} max={5} onChange={field.onChange} />
+              <CounterInput {...field} max={5} disabled onChange={field.onChange} />
             </FormControl>
           </FormItem>
         }}
