@@ -19,6 +19,9 @@ export function useLocationColumns(shopId: number): ColumnDef<LocationOverview>[
   return React.useMemo(() => {
     return [
       {
+        id: 'id',
+      },
+      {
         accessorKey: "name",
         header: "Location",
       },
