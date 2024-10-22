@@ -11,7 +11,7 @@ import { formatCurrencyUSD } from '@/util/currency';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { TabFormSheet } from '@/components/forms/tab-form';
-import { getShopForIdQueryOptions } from '@/api/shops';
+import { getShopForIdQueryOptions, getShopPermissionsForIdQueryOptions } from '@/api/shops';
 import { EditButton } from '@/components/ui/edit-button';
 import { CheckButton } from '@/components/ui/check-button';
 import { TabStatus } from '@/types/types';
@@ -19,6 +19,7 @@ import { useOnErrorToast, useOnSuccessToast } from '@/api/toasts';
 import { ArchiveButton } from '@/components/ui/archive-button';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { BillPdf } from '@/components/pdfs/bill-pdf';
+import { hasRoles, shop_roles } from '@/util/shops';
 
 export const Route = createFileRoute('/_auth/shops/$shopId/tabs/$tabId/')({
   component: TabComponent
@@ -28,6 +29,7 @@ function TabComponent() {
   const { shopId, tabId } = Route.useParams();
   const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
   const { data: tab } = useSuspenseQuery(getShopTabForIdQueryOptions(shopId, tabId))
+  const { data: roles } = useSuspenseQuery(getShopPermissionsForIdQueryOptions(shopId))
   const onSuccess = useOnSuccessToast()
   const onError = useOnErrorToast()
 
@@ -93,25 +95,29 @@ function TabComponent() {
         <span>{tab.pending_updates?.verification_method}</span>
       </CardContent>
       <CardFooter>
-        <TabFormSheet shop={shop} tab={tab}>
-          <EditButton>Edit </EditButton>
-        </TabFormSheet>
-        <ArchiveButton
-          disabled={closeTab.isPending || tab.status === TabStatus.closed}
-          onClick={() => handleCloseTab(shopId, tabId)}
-        >
-          Close
-        </ArchiveButton>
-        <CheckButton
-          disabled={
-            approveTab.isPending
-            || (tab.status === TabStatus.confirmed && tab.pending_updates === null)
-            || tab.status === TabStatus.closed
-          }
-          onClick={() => handleApprove(shopId, tabId)}
-        >
-          Approve
-        </CheckButton>
+        {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_TABS) &&
+          <>
+            <TabFormSheet shop={shop} tab={tab}>
+              <EditButton>Edit </EditButton>
+            </TabFormSheet>
+            <ArchiveButton
+              disabled={closeTab.isPending || tab.status === TabStatus.closed}
+              onClick={() => handleCloseTab(shopId, tabId)}
+            >
+              Close
+            </ArchiveButton>
+            <CheckButton
+              disabled={
+                approveTab.isPending
+                || (tab.status === TabStatus.confirmed && tab.pending_updates === null)
+                || tab.status === TabStatus.closed
+              }
+              onClick={() => handleApprove(shopId, tabId)}
+            >
+              Approve
+            </CheckButton>
+          </>
+        }
       </CardFooter>
     </Card>
     <Card className='flex flex-col items-start max-w-full overflow-hidden'>
@@ -170,7 +176,9 @@ function TabComponent() {
                 </Table>
               </div>
               <div className='flex gap-2 flex-wrap'>
-                <Button onClick={() => handleClose(shopId, tabId, bill.id)} disabled={bill.is_paid}>Mark Paid</Button>
+                {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ORDERS) &&
+                  <Button onClick={() => handleClose(shopId, tabId, bill.id)} disabled={bill.is_paid}>Mark Paid</Button>
+                }
                 <PDFDownloadLink document={<BillPdf shop={shop} tab={tab} bill={bill} />} fileName={`${tab.display_name}_${FormatDateMMDDYYYY(bill.start_date)}_${FormatDateMMDDYYYY(bill.end_date)}`}>
                   {({ loading, error }) => {
                     return <Button disabled={!!loading || !!error} className='gap-2' variant="outline"><Download className='w-4 h-4' />{error ? "Error generating file" : loading ? "Loading ..." : "Download"}</Button>

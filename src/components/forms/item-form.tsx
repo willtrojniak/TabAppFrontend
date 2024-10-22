@@ -86,31 +86,32 @@ export function useItemForm({ shopId, item }: { shopId: number, item?: Item }) {
   return { form, onSubmit, title, desc }
 }
 
-export function ItemFormDialog({ children, shopId, item, categories, addons, substitutions }: { children: React.ReactNode, shopId: number, item?: Item, categories: CategoryOverview[], addons: ItemOverview[], substitutions: SubstitutionGroup[] }) {
+export function ItemFormDialog({ children, shopId, item, categories, addons, substitutions, disabled }: { children: React.ReactNode, shopId: number, item?: Item, categories: CategoryOverview[], addons: ItemOverview[], substitutions: SubstitutionGroup[], disabled?: boolean }) {
   const { form, onSubmit, title, desc } = useItemForm({ shopId, item })
 
   return <DialogForm form={form} title={title} desc={desc} trigger={children} onSubmit={onSubmit} shouldClose={!item}>
-    <ItemFormBody control={form.control} categories={categories} addons={addons} substitutions={substitutions} />
+    <ItemFormBody control={form.control} categories={categories} addons={addons} substitutions={substitutions} disabled={disabled} />
   </DialogForm>
 }
 
-export function ItemFormCard({ shopId, item, categories, addons, substitutions }: { shopId: number, item?: Item, categories: CategoryOverview[], addons: ItemOverview[], substitutions: SubstitutionGroup[] }) {
+export function ItemFormCard({ shopId, item, categories, addons, substitutions, disabled }: { shopId: number, item?: Item, categories: CategoryOverview[], addons: ItemOverview[], substitutions: SubstitutionGroup[], disabled?: boolean }) {
   const { form, onSubmit, title, desc } = useItemForm({ shopId, item })
 
-  return <CardForm form={form} title={title} desc={desc} onSubmit={onSubmit}>
+  return <CardForm form={form} title={title} desc={desc} onSubmit={onSubmit} disabled={disabled}>
     <div className="flex flex-col gap-2 items-start">
-      <ItemFormBody control={form.control} categories={categories} addons={addons} substitutions={substitutions} />
+      <ItemFormBody control={form.control} categories={categories} addons={addons} substitutions={substitutions} disabled={disabled} />
     </div>
   </CardForm>
 
 }
 
-function ItemFormBody({ control, categories, addons, substitutions }
+function ItemFormBody({ control, categories, addons, substitutions, disabled }
   : {
     control: Control<ItemCreateInput>
     categories: CategoryOverview[],
     addons: ItemOverview[],
-    substitutions: SubstitutionGroup[]
+    substitutions: SubstitutionGroup[],
+    disabled?: boolean
   }) {
 
   return <div className="grid md:grid-cols-3 gap-4">
@@ -118,6 +119,7 @@ function ItemFormBody({ control, categories, addons, substitutions }
       control={control}
       name="name"
       rules={{}}
+      disabled={disabled}
       render={({ field }) => (
         <FormItem className="grid grid-cols-subgrid col-span-full items-center">
           <FormLabel>Name</FormLabel>
@@ -129,6 +131,7 @@ function ItemFormBody({ control, categories, addons, substitutions }
       )} />
     <FormField
       control={control}
+      disabled={disabled}
       name="base_price"
       render={({ field }) => (
         <FormItem className="grid grid-cols-subgrid col-span-full items-center">
@@ -157,6 +160,7 @@ function ItemFormBody({ control, categories, addons, substitutions }
                 {...field}
                 isMulti
                 options={categories}
+                isDisabled={disabled}
                 getOptionValue={(o) => { const category = o as CategoryOverview; return category.id.toString() }}
                 getOptionLabel={(o) => { const category = o as CategoryOverview; return category.name }}
               />
@@ -178,6 +182,7 @@ function ItemFormBody({ control, categories, addons, substitutions }
               <SortableMultiSelect
                 {...field}
                 isMulti
+                isDisabled={disabled}
                 options={substitutions}
                 getOptionValue={(o) => { const group = o as SubstitutionGroup; return group.id.toString() }}
                 getOptionLabel={(o) => { const group = o as SubstitutionGroup; return group.name }}
@@ -200,6 +205,7 @@ function ItemFormBody({ control, categories, addons, substitutions }
               <SortableMultiSelect
                 {...field}
                 isMulti
+                isDisabled={disabled}
                 options={addons}
                 getOptionValue={(o) => { const item = o as ItemOverview; return item.id.toString() }}
                 getOptionLabel={(o) => { const item = o as ItemOverview; return item.name }}

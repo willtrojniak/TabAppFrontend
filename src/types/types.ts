@@ -2,7 +2,6 @@ import { z } from "zod"
 import { categoryOverviewSchema, itemOverviewSchema, substitutionGroupSchema, tabCreateSchema } from "./schemas"
 
 export type User = {
-  id: string
   email: string
   name: string
   preferred_name?: string
@@ -40,6 +39,12 @@ export type LocationOverview = {
 
 export type Shop = ShopOverview & {
   locations: LocationOverview[]
+}
+
+export type ShopUser = User & {
+  updated_at: string,
+  confirmed: boolean,
+  roles: number
 }
 
 export type CategoryOverview = z.output<typeof categoryOverviewSchema>

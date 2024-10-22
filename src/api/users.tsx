@@ -4,8 +4,8 @@ import { QueryClient, QueryOptions, useMutation, useQuery, useQueryClient } from
 import { API_BASE_URL, API_VERSION } from "../util/constants";
 import { UserUpdate } from "@/types/schemas";
 
-function updateUser({ userId, data }: { userId: string, data: UserUpdate }) {
-  const url = `${API_BASE_URL}/api/${API_VERSION}/users/${userId}`
+function updateUser({ data }: { data: UserUpdate }) {
+  const url = `${API_BASE_URL}/api/${API_VERSION}/users`
   return axios.patch(url, data)
 }
 

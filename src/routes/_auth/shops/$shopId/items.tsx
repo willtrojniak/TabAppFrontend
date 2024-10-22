@@ -23,6 +23,8 @@ import { Save, Trash2, X } from 'lucide-react'
 import React from 'react'
 import { z } from 'zod'
 import { useSubstitutionGroupColumns } from '@/components/substitution-groups-table-columns'
+import { getShopPermissionsForIdQueryOptions } from '@/api/shops'
+import { hasRoles, shop_roles } from '@/util/shops'
 
 const searchSchema = z.object({
   category: z.number().min(1).optional().catch(undefined)
@@ -40,6 +42,7 @@ function ItemsComponent() {
   const { shopId } = Route.useParams();
   const { data: items } = useSuspenseQuery(getShopItemsQueryOptions(shopId))
   const categories = useGetShopCategories(shopId);
+  const { data: roles } = useSuspenseQuery(getShopPermissionsForIdQueryOptions(shopId))
 
   const [selectedCategory, setSelectedCategory] = React.useState<Category | undefined>(categories.find(c => c.id === category));
   const [editing, setEditing] = React.useState(false);
@@ -67,60 +70,62 @@ function ItemsComponent() {
     <Form {...form}>
       <form onSubmit={handleSubmit} autoComplete='off'>
         <div className='flex flex-col items-start gap-2'>
-          <div className='flex flex-row flex-wrap gap-2'>
-            {!editing && <CategoryFormDialog shopId={shopId} items={items}><CreateButton disabled={editing}>Create Category</CreateButton></CategoryFormDialog>}
-            {!editing && <ItemFormDialog shopId={shopId} categories={categories} substitutions={substitutions} addons={items}><CreateButton disabled={editing}>Create Item</CreateButton></ItemFormDialog>}
-            {!editing && <EditButton disabled={!selectedCategory} onClick={() => setEditing(true)}> Edit Category</EditButton>}
-            {editing && <>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input {...field} placeholder={selectedCategory?.name} />
-                    </FormControl>
-                  </FormItem>
-                )} />
-              <FormField
-                control={form.control}
-                name="item_ids"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <ReactSelect
-                        {...field}
-                        isMulti
-                        options={items}
-                        getOptionValue={(i) => { const item = i as ItemOverview; return item.id.toString() }}
-                        getOptionLabel={(i) => { const item = i as ItemOverview; return item.name }}
-                        controlShouldRenderValue={false}
-                        placeholder="+ Add Item"
-                        isClearable={false}
-                        backspaceRemovesValue={false}
-                        className='min-w-48'
-                      />
-                    </FormControl>
-                  </FormItem>
-                )} />
-            </>
-            }
-            {editing && <DialogDeleteForm
-              title="Delete Category?"
-              onDelete={async () => {
+          {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ITEMS) &&
+            <div className='flex flex-row flex-wrap gap-2'>
+              {!editing && <CategoryFormDialog shopId={shopId} items={items}><CreateButton disabled={editing}>Create Category</CreateButton></CategoryFormDialog>}
+              {!editing && <ItemFormDialog shopId={shopId} categories={categories} substitutions={substitutions} addons={items}><CreateButton disabled={editing}>Create Item</CreateButton></ItemFormDialog>}
+              {!editing && <EditButton disabled={!selectedCategory} onClick={() => setEditing(true)}> Edit Category</EditButton>}
+              {editing && <>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input {...field} placeholder={selectedCategory?.name} />
+                      </FormControl>
+                    </FormItem>
+                  )} />
+                <FormField
+                  control={form.control}
+                  name="item_ids"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <ReactSelect
+                          {...field}
+                          isMulti
+                          options={items}
+                          getOptionValue={(i) => { const item = i as ItemOverview; return item.id.toString() }}
+                          getOptionLabel={(i) => { const item = i as ItemOverview; return item.name }}
+                          controlShouldRenderValue={false}
+                          placeholder="+ Add Item"
+                          isClearable={false}
+                          backspaceRemovesValue={false}
+                          className='min-w-48'
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )} />
+              </>
+              }
+              {editing && <DialogDeleteForm
+                title="Delete Category?"
+                onDelete={async () => {
 
-                deleteCategory.mutate({ shopId, categoryId: selectedCategory!.id }, {
-                  onError,
-                  onSuccess: () => {
-                    onSuccess("Successfully deleted category.")
-                    setEditing(false)
-                    setSelectedCategory(undefined)
-                  }
-                })
-              }} />}
-            {editing && <Button className='gap-2' type='reset' variant='outline' onClick={() => { form.reset(); setEditing(false) }}><X className='w-4 h-4' />  Discard Changes</Button>}
-            {editing && <Button className='gap-2'><Save className='w-4 h-4' />  Save Changes</Button>}
-          </div>
+                  deleteCategory.mutate({ shopId, categoryId: selectedCategory!.id }, {
+                    onError,
+                    onSuccess: () => {
+                      onSuccess("Successfully deleted category.")
+                      setEditing(false)
+                      setSelectedCategory(undefined)
+                    }
+                  })
+                }} />}
+              {editing && <Button className='gap-2' type='reset' variant='outline' onClick={() => { form.reset(); setEditing(false) }}><X className='w-4 h-4' />  Discard Changes</Button>}
+              {editing && <Button className='gap-2'><Save className='w-4 h-4' />  Save Changes</Button>}
+            </div>
+          }
           <CategoryTabSelect categories={categories} value={selectedCategory} onValueChange={onCategoryChange} disabled={editing} />
           <div className='grid  grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2'>
             {!selectedCategory && items.map(item => (
@@ -155,9 +160,11 @@ function ItemsComponent() {
           <DataTable columns={substitutionGroupCols} data={substitutions} />
         </CardContent>
         <CardFooter>
-          <SubstitutionGroupFormDialog shopId={shopId} items={items}>
-            <CreateButton> Create Substitution Group</CreateButton>
-          </SubstitutionGroupFormDialog>
+          {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ITEMS) &&
+            <SubstitutionGroupFormDialog shopId={shopId} items={items}>
+              <CreateButton> Create Substitution Group</CreateButton>
+            </SubstitutionGroupFormDialog>
+          }
         </CardFooter>
       </Card>
       <Outlet />

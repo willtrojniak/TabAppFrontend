@@ -35,7 +35,7 @@ export function useUserForm({ user }: { user: User }) {
   }, [user])
 
   const onSubmit = React.useCallback(async (values: UserUpdate) => {
-    await updateUser.mutateAsync({ userId: user.id, data: values }, {
+    await updateUser.mutateAsync({ data: values }, {
       onSuccess: () => {
         toast({
           title: `Success!`,
@@ -44,7 +44,7 @@ export function useUserForm({ user }: { user: User }) {
       },
       onError,
     })
-  }, [user.id])
+  }, [user.email])
   const title = "Edit User Preferences"
   const desc = "Make changes to your user preferences."
 

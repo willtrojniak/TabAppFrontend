@@ -1,8 +1,4 @@
-import { ensureShopCategories } from '@/api/categories'
-import { ensureShopItems } from '@/api/items'
-import { ensureShopForId, getShopForIdQueryOptions } from '@/api/shops'
-import { ensureShopSubstitutions } from '@/api/substitutions'
-import { ensureShopTabs } from '@/api/tabs'
+import { ensureShopForId, ensureShopForIdPermissions, getShopForIdQueryOptions } from '@/api/shops'
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { z } from 'zod'
 
@@ -24,10 +20,7 @@ export const Route = createFileRoute('/_auth/shops/$shopId')({
   loader: async ({ context, params }) => {
     return await Promise.all([
       ensureShopForId(context.queryClient, params.shopId),
-      ensureShopCategories(context.queryClient, params.shopId),
-      ensureShopSubstitutions(context.queryClient, params.shopId),
-      ensureShopItems(context.queryClient, params.shopId),
-      ensureShopTabs(context.queryClient, params.shopId)
+      ensureShopForIdPermissions(context.queryClient, params.shopId)
     ])
   }
 

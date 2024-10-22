@@ -10,6 +10,8 @@ import { Plus } from 'lucide-react'
 import { getShopCategoriesQueryOptions } from '@/api/categories'
 import { ItemFormCard } from '@/components/forms/item-form'
 import { getShopSubstitutionsQueryOptions } from '@/api/substitutions'
+import { getShopPermissionsForIdQueryOptions } from '@/api/shops'
+import { hasRoles, shop_roles } from '@/util/shops'
 
 export const Route = createFileRoute('/_auth/shops/$shopId/items/$itemId/')({
   component: ItemComponent
@@ -21,12 +23,13 @@ function ItemComponent() {
   const { data: items } = useSuspenseQuery(getShopItemsQueryOptions(shopId))
   const { data: item } = useSuspenseQuery(getShopItemForIdQueryOptions(shopId, itemId))
   const { data: substitutions } = useSuspenseQuery(getShopSubstitutionsQueryOptions(shopId))
+  const { data: roles } = useSuspenseQuery(getShopPermissionsForIdQueryOptions(shopId))
 
   const variantCols = useItemVariantColumns(shopId, itemId);
 
   return <div className='flex flex-col items-start gap-4'>
     <div className='flex flex-row flex-wrap gap-4 flex-1 items-start'>
-      <ItemFormCard shopId={shopId} item={item} categories={categories} addons={items} substitutions={substitutions} />
+      <ItemFormCard shopId={shopId} item={item} categories={categories} addons={items} substitutions={substitutions} disabled={!hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ITEMS)} />
       <Card>
         <CardHeader>
           <CardTitle>Edit Item Variants</CardTitle>
@@ -35,9 +38,10 @@ function ItemComponent() {
           <DataTable columns={variantCols} data={item.variants} />
         </CardContent>
         <CardFooter>
-          <ItemVariantFormDialog shopId={shopId} itemId={itemId}>
-            <Button variant="ghost"><Plus className='w-4 h-4 mr-2' /> Create Variant</Button>
-          </ItemVariantFormDialog>
+          {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ITEMS) &&
+            <ItemVariantFormDialog shopId={shopId} itemId={itemId}>
+              <Button variant="ghost"><Plus className='w-4 h-4 mr-2' /> Create Variant</Button>
+            </ItemVariantFormDialog>}
         </CardFooter>
       </Card>
     </div>

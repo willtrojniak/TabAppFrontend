@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Form } from '../ui/form';
 
-export function CardForm<T extends FieldValues>({ children, className, title, desc, form, onSubmit, requireDirty = true }:
+export function CardForm<T extends FieldValues>({ children, className, title, desc, form, onSubmit, disabled, requireDirty = true }:
   {
     form: UseFormReturn<T>,
     onSubmit: (data: T) => Promise<void>
@@ -13,6 +13,7 @@ export function CardForm<T extends FieldValues>({ children, className, title, de
     children: React.ReactNode,
     title: string,
     desc: string,
+    disabled?: boolean
   }) {
   const { handleSubmit, formState: { isDirty, isValid, isSubmitted, isSubmitting } } = form;
 
@@ -28,7 +29,7 @@ export function CardForm<T extends FieldValues>({ children, className, title, de
         </CardContent>
         <CardFooter className="justify-end gap-2">
           <Button type="submit" variant="default" disabled={
-            (requireDirty && !isDirty) || (!isValid && isSubmitted) || isSubmitting
+            (requireDirty && !isDirty) || (!isValid && isSubmitted) || isSubmitting || disabled
           }>Save</Button>
         </CardFooter>
       </form>
