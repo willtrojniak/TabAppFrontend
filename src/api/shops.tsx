@@ -14,7 +14,7 @@ export function useCreateShop() {
   return useMutation({
     mutationFn: createShop,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getShopsQueryOptions().queryKey })
+      queryClient.invalidateQueries({ queryKey: ['shops'] })
     },
   })
 }
@@ -29,42 +29,32 @@ export function useUpdateShop() {
   return useMutation({
     mutationFn: updateShop,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getShopsQueryOptions().queryKey })
+      queryClient.invalidateQueries({ queryKey: ['shops'] })
     },
   })
 }
 
-async function getShops() {
-  const url = `${API_BASE_URL}/api/${API_VERSION}/shops`
+export type ShopsQueryParams = {
+  isMember?: boolean
+  isPending?: boolean
+}
+
+async function getShops({ isMember, isPending }: ShopsQueryParams) {
+  const url = encodeURI(`${API_BASE_URL}/api/${API_VERSION}/shops?member=${isMember}&pending=${isPending}`)
   const response = await axios.get<ShopOverview[]>(url)
   return response.data;
 }
 
-
-export function getShopsQueryOptions() {
-  return { queryKey: ['shops'], queryFn: getShops } satisfies QueryOptions
+export function getShopsQueryOptions(params: ShopsQueryParams) {
+  return { queryKey: ['shops', params], queryFn: () => getShops(params) } satisfies QueryOptions
 }
 
-export async function ensureShops(queryClient: QueryClient) {
-  return await queryClient.ensureQueryData(getShopsQueryOptions())
+export async function ensureShops(queryClient: QueryClient, params: ShopsQueryParams) {
+  return await queryClient.ensureQueryData(getShopsQueryOptions(params))
 }
 
-export function invalidateGetShops(queryClient: QueryClient) {
-  queryClient.invalidateQueries({ queryKey: ['shops'] })
-}
-
-async function getShopsForUserId(userId: string) {
-  const url = encodeURI(`${API_BASE_URL}/api/${API_VERSION}/shops?userId=${userId}`)
-  const response = await axios.get<ShopOverview[]>(url)
-  return response.data;
-}
-
-export function getShopsForUserIdQueryOptions(userId: string) {
-  return { queryKey: ['shops', { userId }], queryFn: () => getShopsForUserId(userId) } satisfies QueryOptions
-}
-
-export async function ensureShopsForUserId(queryClient: QueryClient, userId: string) {
-  return await queryClient.ensureQueryData(getShopsForUserIdQueryOptions(userId))
+export function invalidateGetShops(queryClient: QueryClient, params: ShopsQueryParams) {
+  queryClient.invalidateQueries({ queryKey: getShopsQueryOptions(params).queryKey })
 }
 
 async function getShopForId(shopId: number) {

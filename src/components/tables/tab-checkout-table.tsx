@@ -55,29 +55,30 @@ export function TabCheckoutTable({ shop, data, selectedTab, setSelectedTab }: {
   })
 
   return <div className="flex flex-col items-start gap-2 max-w-full">
-    <div className="flex gap-2 items-end justify-between w-full">
-      <div className="flex gap-2 items-baseline">
+    <div className="flex flex-col gap-2 w-full">
+      <div className="whitespace-nowrap">Selected: <b>{selectedTab?.display_name ?? "-"}</b></div>
+      <div className="flex flex-wrap gap-2 items-end justify-between w-full">
         <Input placeholder="Search tabs..."
+          className="min-w-48 max-w-64 flex-1"
           value={globalFilter ?? ''}
           onChange={(e) => setGlobalFilter(e.currentTarget.value)}
         />
-        <div className="whitespace-nowrap">Selected tab: {selectedTab?.display_name ?? "-"}</div>
-      </div>
-      <div className="flex gap-2 items-center">
-        <Select onValueChange={(v) => table.getColumn('location')?.setFilterValue(parseInt(v))} value={table.getColumn('location')?.getFilterValue()?.toString() ?? ""}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select shop location..." />
-          </SelectTrigger>
-          <SelectContent>
-            {shop.locations.map(o => (<SelectItem key={o.id} value={o.id.toString()}>{o.name}</SelectItem>))}
-          </SelectContent>
-        </Select>
-        <Toggle
-          pressed={table.getColumn('active')?.getFilterValue() as boolean ?? true}
-          onPressedChange={(val) => table.getColumn('active')?.setFilterValue(val)}
-        >
-          Active
-        </Toggle>
+        <div className="flex gap-2 items-center">
+          <Select onValueChange={(v) => table.getColumn('location')?.setFilterValue(parseInt(v))} value={table.getColumn('location')?.getFilterValue()?.toString() ?? ""}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select shop location..." />
+            </SelectTrigger>
+            <SelectContent>
+              {shop.locations.map(o => (<SelectItem key={o.id} value={o.id.toString()}>{o.name}</SelectItem>))}
+            </SelectContent>
+          </Select>
+          <Toggle
+            pressed={table.getColumn('active')?.getFilterValue() as boolean ?? true}
+            onPressedChange={(val) => table.getColumn('active')?.setFilterValue(val)}
+          >
+            Active
+          </Toggle>
+        </div>
       </div>
     </div>
     <div className="bg-background text-foreground rounded-md max-w-full max-h-96 border overflow-scroll">
