@@ -39,7 +39,7 @@ export function useOrderForm({ shopId, tabId, item }: {
   })
 
   React.useEffect(() => {
-    form.reset(getItemDefaults(item))
+    form.reset(getItemDefaults(item), { keepValues: false })
   }, [item])
 
   const addOrder = useAddOrderToTab()
@@ -104,6 +104,9 @@ export function OrderFormDialog({ shopId, tabId, item, open, onOpenChange }: {
       onOpenChange?.(false)
     } catch (e) { }
   })
+  React.useEffect(() => {
+    if (open) form.reset(getItemDefaults(item));
+  }, [open, item])
 
   return <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent>
