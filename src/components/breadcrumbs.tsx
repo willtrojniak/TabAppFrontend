@@ -19,7 +19,7 @@ export function Breadcrumbs() {
     <BreadcrumbList>
       <BreadcrumbItem>
         {breadcrumbs.length === 0 ?
-          <BreadcrumbPage><Home className="w-4 h-4" /></BreadcrumbPage>
+          <BreadcrumbPage className="flex gap-2 items-center"><Home className="w-4 h-4" /><p className="text-sm font-semibold">CaféTrackr</p></BreadcrumbPage>
           :
           <BreadcrumbLink asChild>
             <Link to='/'><Home className='w-4 h-4' /></Link>
