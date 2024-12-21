@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+import animatePlugin from 'tailwindcss-animate'
+import containerQueries from '@tailwindcss/container-queries'
+
+export default {
   darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -73,8 +76,6 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/container-queries")
+  plugins: [animatePlugin, containerQueries
   ],
 }
