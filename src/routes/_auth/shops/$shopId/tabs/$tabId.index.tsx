@@ -11,7 +11,7 @@ import { formatCurrencyUSD } from '@/util/currency';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { TabFormSheet } from '@/components/forms/tab-form';
-import { getShopForIdQueryOptions, getShopPermissionsForIdQueryOptions } from '@/api/shops';
+import { getShopForIdQueryOptions } from '@/api/shops';
 import { EditButton } from '@/components/ui/edit-button';
 import { CheckButton } from '@/components/ui/check-button';
 import { TabStatus } from '@/types/types';
@@ -19,7 +19,7 @@ import { useOnErrorToast, useOnSuccessToast } from '@/api/toasts';
 import { ArchiveButton } from '@/components/ui/archive-button';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { BillPdf } from '@/components/pdfs/bill-pdf';
-import { hasRoles, shop_roles } from '@/util/shops';
+import { authorizeTabAction, TabAction } from '@/util/authorization';
 
 export const Route = createFileRoute('/_auth/shops/$shopId/tabs/$tabId/')({
   component: TabComponent
@@ -27,9 +27,9 @@ export const Route = createFileRoute('/_auth/shops/$shopId/tabs/$tabId/')({
 
 function TabComponent() {
   const { shopId, tabId } = Route.useParams();
+  const { user } = Route.useRouteContext();
   const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
   const { data: tab } = useSuspenseQuery(getShopTabForIdQueryOptions(shopId, tabId))
-  const { data: roles } = useSuspenseQuery(getShopPermissionsForIdQueryOptions(shopId))
   const onSuccess = useOnSuccessToast()
   const onError = useOnErrorToast()
 
@@ -95,7 +95,7 @@ function TabComponent() {
         <span>{tab.pending_updates?.verification_method}</span>
       </CardContent>
       <CardFooter>
-        {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_TABS) &&
+        {authorizeTabAction(user, { shop, tab }, TabAction.UPDATE) &&
           <>
             <TabFormSheet shop={shop} tab={tab}>
               <EditButton>Edit </EditButton>
@@ -176,7 +176,7 @@ function TabComponent() {
                 </Table>
               </div>
               <div className='flex gap-2 flex-wrap'>
-                {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ORDERS) &&
+                {authorizeTabAction(user, { shop, tab }, TabAction.CLOSE_BILL) &&
                   <Button onClick={() => handleClose(shopId, tabId, bill.id)} disabled={bill.is_paid}>Mark Paid</Button>
                 }
                 <PDFDownloadLink document={<BillPdf shop={shop} tab={tab} bill={bill} />} fileName={`${tab.display_name}_${FormatDateMMDDYYYY(bill.start_date)}_${FormatDateMMDDYYYY(bill.end_date)}`}>

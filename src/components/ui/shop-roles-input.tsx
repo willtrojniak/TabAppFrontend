@@ -1,11 +1,11 @@
 import React from "react";
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
-import { shop_roles } from "@/util/shops";
 import { isNaN, parseInt } from "lodash";
+import { shopRoles } from "@/util/authorization";
 
 function getRolesFromBits(val: number) {
   const roles = [];
-  for (const key of Object.keys(shop_roles)) {
+  for (const key of Object.keys(shopRoles)) {
     if (!isNaN(key) && (val & parseInt(key)) === parseInt(key)) roles.push(key.toString())
   }
   return roles
@@ -25,9 +25,10 @@ export function ShopRolesInput({ value, onValueChange }: {
   }, [onValueChange])
 
   return <ToggleGroup type="multiple" value={value === 0 ? [] : getRolesFromBits(value)} onValueChange={handleValueChange} className="justify-start">
-    <ToggleGroupItem value={shop_roles.ROLE_USER_MANAGE_ITEMS.toString()}>Manage Items</ToggleGroupItem>
-    <ToggleGroupItem value={shop_roles.ROLE_USER_MANAGE_TABS.toString()}>Manage Tabs</ToggleGroupItem>
-    <ToggleGroupItem value={shop_roles.ROLE_USER_MANAGE_ORDERS.toString()}>Manage Orders</ToggleGroupItem>
-    <ToggleGroupItem value={shop_roles.ROLE_USER_READ_TABS.toString()}>View Tabs</ToggleGroupItem>
+    <ToggleGroupItem value={shopRoles.MANAGE_ITEMS.toString()}>Manage Items</ToggleGroupItem>
+    <ToggleGroupItem value={shopRoles.MANAGE_TABS.toString()}>Manage Tabs</ToggleGroupItem>
+    <ToggleGroupItem value={shopRoles.MANAGE_ORDERS.toString()}>Manage Orders</ToggleGroupItem>
+    <ToggleGroupItem value={shopRoles.READ_TABS.toString()}>View Tabs</ToggleGroupItem>
+    <ToggleGroupItem value={shopRoles.MANAGE_LOCATIONS.toString()}>Manage Locations</ToggleGroupItem>
   </ToggleGroup>
 }

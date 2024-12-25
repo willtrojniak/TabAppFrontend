@@ -1,9 +1,9 @@
-import { getShopForIdQueryOptions, getShopPermissionsForIdQueryOptions } from '@/api/shops'
+import { getShopForIdQueryOptions } from '@/api/shops'
 import { getShopTabsQueryOptions } from '@/api/tabs'
 import { TabFormSheet } from '@/components/forms/tab-form'
 import { TabsTableCard } from '@/components/tabs-table-card'
 import { CreateButton } from '@/components/ui/create-button'
-import { hasRoles, shop_roles } from '@/util/shops'
+import { hasShopRole, shopRoles } from '@/util/authorization'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
@@ -14,11 +14,11 @@ export const Route = createFileRoute('/_auth/shops/$shopId/tabs')({
 
 function TabComponent() {
   const { shopId } = Route.useParams();
+  const { user } = Route.useRouteContext();
   const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
   const { data: tabs } = useSuspenseQuery(getShopTabsQueryOptions(shopId))
-  const { data: roles } = useSuspenseQuery(getShopPermissionsForIdQueryOptions(shopId))
   return <div className='flex flex-col items-start gap-4'>
-    {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_TABS) &&
+    {hasShopRole(user, shop, shopRoles.MANAGE_TABS) &&
       <TabFormSheet shop={shop}>
         <CreateButton>Create Tab</CreateButton>
       </TabFormSheet>

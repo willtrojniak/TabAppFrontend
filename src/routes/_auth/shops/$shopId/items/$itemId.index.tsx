@@ -10,26 +10,27 @@ import { Plus } from 'lucide-react'
 import { getShopCategoriesQueryOptions } from '@/api/categories'
 import { ItemFormCard } from '@/components/forms/item-form'
 import { getShopSubstitutionsQueryOptions } from '@/api/substitutions'
-import { getShopPermissionsForIdQueryOptions } from '@/api/shops'
-import { hasRoles, shop_roles } from '@/util/shops'
+import { authorizeShopAction, ShopAction } from '@/util/authorization'
+import { getShopForIdQueryOptions } from '@/api/shops'
 
 export const Route = createFileRoute('/_auth/shops/$shopId/items/$itemId/')({
   component: ItemComponent
 })
 
 function ItemComponent() {
+  const { user } = Route.useRouteContext();
   const { shopId, itemId } = Route.useParams();
+  const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
   const { data: categories } = useSuspenseQuery(getShopCategoriesQueryOptions(shopId))
   const { data: items } = useSuspenseQuery(getShopItemsQueryOptions(shopId))
   const { data: item } = useSuspenseQuery(getShopItemForIdQueryOptions(shopId, itemId))
   const { data: substitutions } = useSuspenseQuery(getShopSubstitutionsQueryOptions(shopId))
-  const { data: roles } = useSuspenseQuery(getShopPermissionsForIdQueryOptions(shopId))
 
   const variantCols = useItemVariantColumns(shopId, itemId);
 
   return <div className='flex flex-col items-start gap-4'>
     <div className='flex flex-row flex-wrap gap-4 flex-1 items-start'>
-      <ItemFormCard shopId={shopId} item={item} categories={categories} addons={items} substitutions={substitutions} disabled={!hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ITEMS)} />
+      <ItemFormCard shopId={shopId} item={item} categories={categories} addons={items} substitutions={substitutions} disabled={!authorizeShopAction(user, shop, ShopAction.UPDATE_ITEM)} />
       <Card>
         <CardHeader>
           <CardTitle>Edit Item Variants</CardTitle>
@@ -38,7 +39,7 @@ function ItemComponent() {
           <DataTable columns={variantCols} data={item.variants} />
         </CardContent>
         <CardFooter>
-          {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ITEMS) &&
+          {authorizeShopAction(user, shop, ShopAction.CREATE_VARIANT) &&
             <ItemVariantFormDialog shopId={shopId} itemId={itemId}>
               <Button variant="ghost"><Plus className='w-4 h-4 mr-2' /> Create Variant</Button>
             </ItemVariantFormDialog>}

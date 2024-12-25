@@ -1,18 +1,18 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ShopFormCard } from '@/components/forms/shop-form'
 import { PaymentMethod } from '@/types/types'
-import { getShopForIdQueryOptions, getShopPermissionsForIdQueryOptions, getShopUsersForIdQueryOptions } from '@/api/shops'
+import { getShopForIdQueryOptions } from '@/api/shops'
 import { ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLocationColumns } from '@/components/location-table-columns'
 import { DataTable } from '@/components/data-table'
 import { LocationFormDialog } from '@/components/forms/location-form'
 import { CreateButton } from '@/components/ui/create-button'
-import { hasRoles, shop_roles } from '@/util/shops'
 import { useUserColumns } from '@/components/user-table-columns'
 import { ShopUserFormDialog } from '@/components/forms/shop-user-form'
+import { hasShopRole, shopRoles } from '@/util/authorization'
 
 export const Route = createFileRoute('/_auth/shops/$shopId/')({
   component: ShopComponent
@@ -20,9 +20,8 @@ export const Route = createFileRoute('/_auth/shops/$shopId/')({
 
 function ShopComponent() {
   const { shopId } = Route.useParams();
+  const { user } = Route.useRouteContext();
   const { data: shop } = useSuspenseQuery(getShopForIdQueryOptions(shopId))
-  const { data: roles } = useSuspenseQuery(getShopPermissionsForIdQueryOptions(shopId))
-  const { data: users } = useQuery(getShopUsersForIdQueryOptions(shopId))
 
   const locationCols = useLocationColumns(shopId)
   const userCols = useUserColumns(shopId)
@@ -30,7 +29,7 @@ function ShopComponent() {
 
   return <div className='flex flex-col items-start xl:flex-row flex-wrap justify-start gap-4 max-w-full'>
     <div className='flex flex-wrap xl:flex-col items-stretch justify-stretch gap-4'>
-      {hasRoles(roles, shop_roles.ROLE_USER_MANAGE_ORDERS) &&
+      {hasShopRole(user, shop, shopRoles.MANAGE_ORDERS) &&
         <Card>
           <CardHeader>
             <CardTitle>Checkout</CardTitle>
@@ -46,7 +45,7 @@ function ShopComponent() {
         </CardHeader>
         <CardFooter><Link to='/shops/$shopId/items' params={{ shopId }}><Button className='gap-2'>Go to items<ExternalLink className='w-4 h-4' /></Button></Link></CardFooter>
       </Card>
-      {hasRoles(roles, shop_roles.ROLE_USER_READ_TABS) &&
+      {hasShopRole(user, shop, shopRoles.READ_TABS) &&
         <Card >
           <CardHeader>
             <CardTitle>Tabs</CardTitle>
@@ -56,9 +55,9 @@ function ShopComponent() {
         </Card>
       }
     </div>
-    {hasRoles(roles, shop_roles.ROLE_USER_OWNER) &&
-      <div className='flex flex-wrap gap-4'>
-        <div ><ShopFormCard shop={shop} paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]} /></div>
+    <div className='flex flex-wrap gap-4'>
+      <div ><ShopFormCard shop={shop} paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]} /></div>
+      {hasShopRole(user, shop, shopRoles.MANAGE_LOCATIONS) &&
         <Card >
           <CardHeader>
             <CardTitle>Shop Locations</CardTitle>
@@ -73,23 +72,23 @@ function ShopComponent() {
             </LocationFormDialog>
           </CardFooter>
         </Card>
-        {users &&
-          <Card>
-            <CardHeader>
-              <CardTitle>Shop Users</CardTitle>
-              <CardDescription>Manage users and their permissions.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <DataTable columns={userCols} data={users} />
-            </CardContent>
-            <CardFooter>
-              <ShopUserFormDialog shopId={shopId}>
-                <CreateButton>Add User</CreateButton>
-              </ShopUserFormDialog>
-            </CardFooter>
-          </Card>
-        }
-      </div>
-    }
+      }
+      {user.id === shop.owner_id &&
+        <Card>
+          <CardHeader>
+            <CardTitle>Shop Users</CardTitle>
+            <CardDescription>Manage users and their permissions.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DataTable columns={userCols} data={shop.users} />
+          </CardContent>
+          <CardFooter>
+            <ShopUserFormDialog shopId={shopId}>
+              <CreateButton>Add User</CreateButton>
+            </ShopUserFormDialog>
+          </CardFooter>
+        </Card>
+      }
+    </div>
   </div >
 }

@@ -2,6 +2,7 @@ import { z } from "zod"
 import { categoryOverviewSchema, itemOverviewSchema, substitutionGroupSchema, tabCreateSchema } from "./schemas"
 
 export type User = {
+  id: string
   email: string
   name: string
   preferred_name?: string
@@ -39,6 +40,7 @@ export type LocationOverview = {
 
 export type Shop = ShopOverview & {
   locations: LocationOverview[]
+  users: ShopUser[]
 }
 
 export type ShopUser = User & {
@@ -110,7 +112,7 @@ export type TabOverview = TabBase & {
   pending_updates: TabBase | null,
   is_pending_balance: boolean,
   shop_id: number,
-  owner_id: number,
+  owner_id: string,
   id: number,
   status: TabStatus,
   locations: LocationOverview[]
