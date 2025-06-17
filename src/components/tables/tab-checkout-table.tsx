@@ -81,7 +81,7 @@ export function TabCheckoutTable({ shop, data, selectedTab, setSelectedTab }: {
         </div>
       </div>
     </div>
-    <div className="bg-background text-foreground rounded-md max-w-full max-h-96 border overflow-scroll">
+    <div className="bg-background text-foreground rounded-md max-w-full max-h-[80vh] border overflow-scroll">
       <Table className="max-h-full overflow-y-auto">
         <TableHeader className="whitespace-nowrap">
           {table.getHeaderGroups().map((headerGroup) => (
