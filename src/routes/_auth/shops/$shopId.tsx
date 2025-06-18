@@ -1,5 +1,5 @@
 import { ensureShopForId, getShopForIdQueryOptions } from '@/api/shops'
-import { NavigationMenu, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
+import { NavigationMenu, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { NavigationMenuLink } from '@radix-ui/react-navigation-menu'
 import { createFileRoute, Link, notFound, Outlet } from '@tanstack/react-router'
 import { Coins } from 'lucide-react'

@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getShopTabForIdQueryOptions, useApproveTab, useCloseBill, useCloseTab } from '@/api/tabs'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { ChevronsUpDown, CornerDownRight, Download } from 'lucide-react';
