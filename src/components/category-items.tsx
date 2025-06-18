@@ -17,7 +17,7 @@ export function CategoryTabSelect({ categories, value, onValueChange, disabled =
 
   if (!allowNone && categories.length === 0) return <div>No Categories</div>
 
-  return <Tabs value={value?.id.toString() ?? ""} onValueChange={handleValueChange} className="max-w-full overflow-x-scroll">
+  return <Tabs value={value?.id.toString() ?? ""} onValueChange={handleValueChange} className="max-w-full overflow-x-scroll pr-2">
     <TabsList>
       {allowNone && <TabsTrigger key={''} value={''} disabled={disabled}>All</TabsTrigger>}
       {categories.map(c => <TabsTrigger key={c.id} value={`${c.id}`} disabled={disabled}>{c.name}</TabsTrigger>)}

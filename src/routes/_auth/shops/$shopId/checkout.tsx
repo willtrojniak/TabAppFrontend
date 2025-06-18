@@ -53,7 +53,7 @@ function CheckoutComponent() {
     <ResizableHandle />
     <ResizablePanel defaultSize={67} className='py-2' >
       <Suspense fallback={"Loading"}>
-        <div className='flex flex-col items-start px-6'>
+        <div className='flex flex-col items-start pl-6'>
           <TabCheckoutTable shop={shop} data={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
           <Outlet />
         </div>

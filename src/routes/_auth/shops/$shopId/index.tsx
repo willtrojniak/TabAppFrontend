@@ -27,7 +27,7 @@ function ShopComponent() {
   const userCols = useUserColumns(shopId)
 
 
-  return <div className='flex flex-col items-start xl:flex-row flex-wrap justify-start gap-4 max-w-full'>
+  return <div className='flex flex-col flex-wrap items-start xl:flex-row xl:flex-nowrap justify-start gap-4 max-w-full'>
     <div className='flex flex-wrap xl:flex-col items-stretch justify-stretch gap-4'>
       {hasShopRole(user, shop, shopRoles.MANAGE_ORDERS) &&
         <Card>
