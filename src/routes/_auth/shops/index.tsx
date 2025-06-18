@@ -21,7 +21,7 @@ function ShopsComponent() {
   const { data: invitedShops } = useSuspenseQuery(getShopsQueryOptions({ isMember: true, isPending: true }))
   const acceptInvite = useAcceptShopInvite()
   const rejectInvite = useRemoveShopInvite()
-  return <div className='flex flex-col items-center gap-4 max-w-full'>
+  return <div className='flex flex-col items-center gap-8 max-w-full'>
     {memberShops.length === 0 ?
       <>
         <ShopFormDialog paymentMethods={[PaymentMethod.in_person, PaymentMethod.chartstring]}>
@@ -31,7 +31,7 @@ function ShopsComponent() {
       </>
       :
       <div>
-        <h2 className='text-lg font-bold mb-2'> Your Shops </h2>
+        <h2 className='text-lg font-bold mb-2 text-center'> Shops </h2>
         <div className='flex flex-row flex-wrap gap-4'>
           {memberShops.map((shop) => <Card key={shop.id}>
             <CardHeader><CardTitle>{shop.name}</CardTitle></CardHeader>
@@ -41,8 +41,9 @@ function ShopsComponent() {
       </div>
     }
     <div>
-      <h2 className='text-lg font-bold mb-2'> Your Invites </h2>
+      <h2 className='text-lg font-bold mb-2 text-center'> Invites </h2>
       <div className='flex flex-row flex-wrap gap-4'>
+        {invitedShops.length === 0 && <span className='text-muted-foreground'>No pending invites</span>}
         {invitedShops.map((shop) => <Card key={shop.id}>
           <CardHeader><CardTitle>{shop.name}</CardTitle></CardHeader>
           <CardFooter className='flex gap-2'>
